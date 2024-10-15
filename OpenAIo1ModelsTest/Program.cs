@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using OpenAI.Chat;
 using System.ClientModel.Primitives;
+using Microsoft.ML.Tokenizers;
 
 namespace OpenAIo1ModelsTest
 {
@@ -35,8 +36,8 @@ namespace OpenAIo1ModelsTest
             var systemPrompt = string.Empty;
 
             var riskInstructions = """
-                Please compare the risk factors from 2023 to 2024 by creating a table that shows
-                the changes in risk factors between the two years. The table should include the
+                Please compare the risk factors from 2023 to 2024 by creating a Markdown table that shows
+                the changes in risk factors between the two years. The Markdown compliant table should include the
                 following columns:
                 1. title, a brief summary tile for the risk factor
                 2. 2023, summary of this risk factor in 2023 10K, if present
@@ -45,7 +46,7 @@ namespace OpenAIo1ModelsTest
                 factor, removed risk factor, modified risk factor)
                 Note this requires match similar risk factors between 2023 and 2024, and identify
                 the changes in the risk factors between the two years. Make sure the table has
-                row number.
+                row numbers and is Markdown compliant.
                 """;
 
             var promptInstructions = $"""
@@ -78,10 +79,15 @@ namespace OpenAIo1ModelsTest
 
             var completionOptions = new ChatCompletionOptions()
             {
-                // Temperature = 0.3f,
+                // Temperature = 1f,
                 EndUserId = "o1Testing",
                 // TopLogProbabilityCount = true ? 5 : 1 // Azure OpenAI maximum is 5               
             };
+
+            Console.WriteLine($"Submitting Risk Analysis...");
+            Tokenizer tokenizer = TiktokenTokenizer.CreateForModel("gpt-4");
+            var tokenCount = tokenizer.CountTokens(promptInstructions);
+            Console.WriteLine($"Token Count: {tokenCount}");
 
             var startTime = DateTime.UtcNow;
             var response = await chatClient.CompleteChatAsync(chatMessages, completionOptions);
