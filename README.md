@@ -1,5 +1,12 @@
 # OpenAIo1ModelsTest
 
+C# Repository that will:
+* Use OpenAI o1 reasoning to compare 2 10-K SEC reports
+* Extract the differences, changes in the "Strategic and Competitive Risks" section
+* Use OpenAI GPT-4o-2024-08-06 to create a formatted Markdown table of risks
+
+TODO: Add all risk sections from SEC Report
+
 Here is a comparison of the risk factors from Microsoft's 2023 and 2024 10K filings:
 
 | Row | Title                                                          | 2023 Summary                                                                                                                                                                                                                                                                                                                       | 2024 Summary                                                                                                                                                                                                                                                                                                                                             | Change                                                                                                     |
