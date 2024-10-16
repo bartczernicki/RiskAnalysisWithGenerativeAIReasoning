@@ -27,9 +27,10 @@ namespace OpenAIo1ModelsTest
 
 
 
-            var retryPolicy = new ClientRetryPolicy(maxRetries: 10);
+            var retryPolicy = new ClientRetryPolicy(maxRetries: 3);
             AzureOpenAIClientOptions azureOpenAIClientOptions = new AzureOpenAIClientOptions(AzureOpenAIClientOptions.ServiceVersion.V2024_10_01_Preview);
             azureOpenAIClientOptions.RetryPolicy = retryPolicy;
+            azureOpenAIClientOptions.NetworkTimeout = TimeSpan.FromMinutes(5); // Large Timeout
 
             Uri azureOpenAIResourceUri = new(azureOpenAIEndpoint!);
             var azureApiCredential = new System.ClientModel.ApiKeyCredential(azureOpenAIAPIKey!);
