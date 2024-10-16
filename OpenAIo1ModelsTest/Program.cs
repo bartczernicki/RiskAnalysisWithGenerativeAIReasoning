@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using OpenAI.Chat;
 using System.ClientModel.Primitives;
 using Microsoft.ML.Tokenizers;
+using ConsoleTables;
+using Markdig;
 
 namespace OpenAIo1ModelsTest
 {
@@ -19,6 +21,11 @@ namespace OpenAIo1ModelsTest
             var azureOpenAIAPIKey = configuration.GetSection("AzureOpenAI")["APIKey"];
             var azureOpenAIEndpoint = configuration.GetSection("AzureOpenAI")["Endpoint"];
             var azureModelDeploymentName = configuration.GetSection("AzureOpenAI")["ModelDeploymentName"];
+            var azureOpenAIAPIKeyGPT4o = configuration.GetSection("AzureOpenAI")["APIKeyGPT4o"];
+            var azureOpenAIEndpointGPT4o = configuration.GetSection("AzureOpenAI")["EndpointGPT4o"];
+            var azureModelDeploymentNameGPT4o = configuration.GetSection("AzureOpenAI")["ModelDeploymentNameGPT4o"];
+
+
 
             var retryPolicy = new ClientRetryPolicy(maxRetries: 10);
             AzureOpenAIClientOptions azureOpenAIClientOptions = new AzureOpenAIClientOptions(AzureOpenAIClientOptions.ServiceVersion.V2024_10_01_Preview);
@@ -28,10 +35,13 @@ namespace OpenAIo1ModelsTest
             var azureApiCredential = new System.ClientModel.ApiKeyCredential(azureOpenAIAPIKey!);
 
             var client = new AzureOpenAIClient(azureOpenAIResourceUri, azureApiCredential, azureOpenAIClientOptions);
+            var clientGPT4o = new AzureOpenAIClient(new Uri(azureOpenAIEndpointGPT4o!), new System.ClientModel.ApiKeyCredential(azureOpenAIAPIKeyGPT4o!), azureOpenAIClientOptions);
             var modelDeploymentName = azureModelDeploymentName;
 
-            // Get new chat client
+            // Get new chat client for o1
             var chatClient = client.GetChatClient(modelDeploymentName);
+            // Get new chat client for gpt-4o
+            var chatClientGPT4o = clientGPT4o.GetChatClient(azureModelDeploymentNameGPT4o);
 
             var systemPrompt = string.Empty;
 
@@ -44,6 +54,7 @@ namespace OpenAIo1ModelsTest
                 3. 2024, summary of this risk factor in 2024 10K, if present
                 4. Change, description of the change between 2023 and 2024 (e.g., new risk
                 factor, removed risk factor, modified risk factor)
+
                 Note this requires match similar risk factors between 2023 and 2024, and identify
                 the changes in the risk factors between the two years. Make sure the table has
                 row numbers and is Markdown compliant.
@@ -58,11 +69,11 @@ namespace OpenAIo1ModelsTest
 
 
             <Risk Factors in Microsoft 2023 10K>
-            {Data.Microsoft2023RiskFactors}
+            {Data.GetMicrosoft2023RiskFactors()["Strategic and Competitive Risks"]}
             </Risk Factors in Microsoft 2023 10K>
 
             <Risk Factors in Microsoft 2024 10k>
-            {Data.Microsoft2024RiskFactors}
+            {Data.GetMicrosoft2024RiskFactors()["Strategic and Competitive Risks"]}
             </End of Risk Factors in Microsoft 2024 10K>
 
             <Instructions>
@@ -85,6 +96,7 @@ namespace OpenAIo1ModelsTest
             };
 
             Console.WriteLine($"Submitting Risk Analysis...");
+            Console.WriteLine(Data.GetMicrosoft2024RiskFactors().Keys.First());
             Tokenizer tokenizer = TiktokenTokenizer.CreateForModel("gpt-4");
             var tokenCount = tokenizer.CountTokens(promptInstructions);
             Console.WriteLine($"Token Count: {tokenCount}");
@@ -94,15 +106,27 @@ namespace OpenAIo1ModelsTest
             var outputTokenDetails = response.Value.Usage.OutputTokenDetails;
             var totalTokenCount = response.Value.Usage.TotalTokenCount;
 
-            var llmResponse = response.Value.Content.FirstOrDefault()!.Text;
+            var responseo1RiskAnalysis = response.Value.Content.FirstOrDefault()!.Text;
             var endTime = DateTime.UtcNow;
             var durationSections = (endTime - startTime).TotalSeconds;
 
             Console.WriteLine($"Duration: {durationSections} seconds");
             Console.WriteLine($"Reasoning Tokens: {outputTokenDetails.ReasoningTokenCount}");
-            Console.WriteLine($"Total Tokens: {totalTokenCount}");
+            Console.WriteLine($"Total o1 Model Tokens: {totalTokenCount}");
+
+            // Fix the Markdown table formatting
             Console.WriteLine(string.Empty);
-            Console.WriteLine(llmResponse);
+            Console.WriteLine("Fixing Markdown Formatting...");
+            var chatMessagesGPT4o = new List<ChatMessage>();
+            chatMessagesGPT4o.Add($"Fix the following table formatting for proper Markdown: {responseo1RiskAnalysis}");
+            var responseGPT4o = await chatClientGPT4o.CompleteChatAsync(chatMessagesGPT4o, completionOptions);
+            var llmResponseGPT4o = response.Value.Content.FirstOrDefault()!.Text;
+
+            Console.WriteLine(string.Empty);
+            Console.WriteLine("Creating MD File...MicrosoftRiskAnalysis.md");
+            // Convert the Markdown to HTML
+            // var html = Markdown.ToHtml(llmResponseGPT4o);
+            File.WriteAllText("MicrosoftRiskAnalysis.md", llmResponseGPT4o);
         }
     }
 }
