@@ -30,7 +30,7 @@ namespace OpenAIo1ModelsTest
             var retryPolicy = new ClientRetryPolicy(maxRetries: 3);
             AzureOpenAIClientOptions azureOpenAIClientOptions = new AzureOpenAIClientOptions(AzureOpenAIClientOptions.ServiceVersion.V2024_10_01_Preview);
             azureOpenAIClientOptions.RetryPolicy = retryPolicy;
-            azureOpenAIClientOptions.NetworkTimeout = TimeSpan.FromMinutes(5); // Large Timeout
+            azureOpenAIClientOptions.NetworkTimeout = TimeSpan.FromMinutes(20); // Large Timeout
 
             Uri azureOpenAIResourceUri = new(azureOpenAIEndpoint!);
             var azureApiCredential = new System.ClientModel.ApiKeyCredential(azureOpenAIAPIKey!);
@@ -38,21 +38,6 @@ namespace OpenAIo1ModelsTest
             var client = new AzureOpenAIClient(azureOpenAIResourceUri, azureApiCredential, azureOpenAIClientOptions);
             var clientGPT4o = new AzureOpenAIClient(new Uri(azureOpenAIEndpointGPT4o!), new System.ClientModel.ApiKeyCredential(azureOpenAIAPIKeyGPT4o!), azureOpenAIClientOptions);
             var modelDeploymentName = azureModelDeploymentName;
-
-            // Get new chat client for o1
-            var chatClient = client.GetChatClient(modelDeploymentName);
-            // Get new chat client for gpt-4o
-            var chatClientGPT4o = clientGPT4o.GetChatClient(azureModelDeploymentNameGPT4o);
-
-            //var systemPrompt = string.Empty;
-
-
-            //var systemChatMessage = new SystemChatMessage(string.Empty);
-            //var userChatMessage = new UserChatMessage(Prompts.FullPromptForSECDocumentAnalysis);
-
-            //var chatMessages = new List<ChatMessage>();
-            ////chatMessages.Add("List frameworks for Decision Making");
-            //chatMessages.Add(string.Join(" ", new string[] { systemPrompt, Prompts.FullPromptForSECDocumentAnalysis }));
 
             var completionOptions = new ChatCompletionOptions()
             {
@@ -82,6 +67,11 @@ namespace OpenAIo1ModelsTest
                 Tokenizer sectionTokenizer = TiktokenTokenizer.CreateForModel("gpt-4");
                 var sectionTokenCount = sectionTokenizer.CountTokens(promptInstructions);
                 Console.WriteLine($"Prompt Token Count: {sectionTokenCount}");
+
+                // Get new chat client for o1
+                var chatClient = client.GetChatClient(modelDeploymentName);
+                // Get new chat client for gpt-4o
+                var chatClientGPT4o = clientGPT4o.GetChatClient(azureModelDeploymentNameGPT4o);
 
                 var sectionStartTime = DateTime.UtcNow;
                 var sectionResponse = await chatClient.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptions);
@@ -133,7 +123,11 @@ namespace OpenAIo1ModelsTest
             Console.WriteLine($"Prompt Token Count: {tokenCount}");
 
             var startTime = DateTime.UtcNow;
-            var response = await chatClient.CompleteChatAsync(chatMessageRiskConsolidation, completionOptions);
+
+            // Get new chat client for o1
+            var chatClientRiskAnalysis = client.GetChatClient(modelDeploymentName);
+
+            var response = await chatClientRiskAnalysis.CompleteChatAsync(chatMessageRiskConsolidation, completionOptions);
             var outputTokenDetails = response.Value.Usage.OutputTokenDetails;
             var totalTokenCount = response.Value.Usage.TotalTokenCount;
 
