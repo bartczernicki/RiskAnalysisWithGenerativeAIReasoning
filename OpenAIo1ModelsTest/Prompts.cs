@@ -52,5 +52,34 @@ namespace OpenAIo1ModelsTest
 
             return fullPromptTemplate;
         }
+
+        public static string GetFullPromptToConsolidateImportantRisks(List<string> markdownTables)
+        {
+            // Concatenate all the markdown tables into a single string
+            var markdownTablesString = string.Join("\n\n", markdownTables);
+
+            var promptTemplate = $"""
+            <Context>
+            You have extracted risk factor changes from multiple sections of the 10K filings in the following format: 
+            1. title, a brief summary tile for the risk factor
+            2. 2023, summary of this risk factor in 2023 10K, if present
+            3. 2024, summary of this risk factor in 2024 10K, if present
+            4. Change, description of the change between 2023 and 2024 (e.g., new risk
+            factor, removed risk factor, modified risk factor)
+            </Context>
+
+            <Instructions>
+            Below is a list of Markdown tables extracted from the 10K filings. 
+            Please consolidate ONLY the important risk factor changes into a single Markdown table. 
+            DO NOT include the entire tables, only the relevant risk factor changes.
+            </Instructions>
+
+            <Markdown Tables>
+            {markdownTablesString}
+            </Markdown Tables>
+            """;
+
+            return promptTemplate;
+        }
     }
 }
