@@ -6,7 +6,7 @@ C# Repository that will:
   * 2024:  https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/msft-20240630.htm#item_1a_risk_factors 
 * Extract the differences, changes in the "Strategic and Competitive Risks" section
 * Use OpenAI GPT-4o-2024-08-06 to create a formatted Markdown table of risks
-  * File Created: https://github.com/bartczernicki/OpenAIo1ModelsTest/blob/master/OpenAIo1ModelsTest/Output/MicrosoftRiskAnalysis.md  
+ * File Created: https://github.com/bartczernicki/OpenAIo1ModelsTest/blob/master/OpenAIo1ModelsTest/Output/MicrosoftRiskAnalysis.md  
 
 TODO: Add all risk sections from SEC Report
 
