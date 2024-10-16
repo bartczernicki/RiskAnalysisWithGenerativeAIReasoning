@@ -43,50 +43,15 @@ namespace OpenAIo1ModelsTest
             // Get new chat client for gpt-4o
             var chatClientGPT4o = clientGPT4o.GetChatClient(azureModelDeploymentNameGPT4o);
 
-            var systemPrompt = string.Empty;
-
-            var riskInstructions = """
-                Please compare the risk factors from 2023 to 2024 by creating a Markdown table that shows
-                the changes in risk factors between the two years. The Markdown compliant table should include the
-                following columns:
-                1. title, a brief summary tile for the risk factor
-                2. 2023, summary of this risk factor in 2023 10K, if present
-                3. 2024, summary of this risk factor in 2024 10K, if present
-                4. Change, description of the change between 2023 and 2024 (e.g., new risk
-                factor, removed risk factor, modified risk factor)
-
-                Note this requires match similar risk factors between 2023 and 2024, and identify
-                the changes in the risk factors between the two years. Make sure the table has
-                row numbers and is Markdown compliant.
-                """;
-
-            var promptInstructions = $"""
-            <Context>
-            Below are Risk Factor section of Microsoft's 10K filings for 2023 and 2024.
-            Please compare the risk factors from 2023 to 2024 and provide an analysis based
-            on the following instructions:
-            </Context>
+            //var systemPrompt = string.Empty;
 
 
-            <Risk Factors in Microsoft 2023 10K>
-            {Data.GetMicrosoft2023RiskFactors()["Strategic and Competitive Risks"]}
-            </Risk Factors in Microsoft 2023 10K>
+            //var systemChatMessage = new SystemChatMessage(string.Empty);
+            //var userChatMessage = new UserChatMessage(Prompts.FullPromptForSECDocumentAnalysis);
 
-            <Risk Factors in Microsoft 2024 10k>
-            {Data.GetMicrosoft2024RiskFactors()["Strategic and Competitive Risks"]}
-            </End of Risk Factors in Microsoft 2024 10K>
-
-            <Instructions>
-            {riskInstructions}
-            </Instructions>
-            """;
-
-            var systemChatMessage = new SystemChatMessage(systemPrompt);
-            var userChatMessage = new UserChatMessage(promptInstructions);
-
-            var chatMessages = new List<ChatMessage>();
-            //chatMessages.Add("List frameworks for Decision Making");
-            chatMessages.Add(string.Join(" ", new string[] { systemPrompt, promptInstructions }));
+            //var chatMessages = new List<ChatMessage>();
+            ////chatMessages.Add("List frameworks for Decision Making");
+            //chatMessages.Add(string.Join(" ", new string[] { systemPrompt, Prompts.FullPromptForSECDocumentAnalysis }));
 
             var completionOptions = new ChatCompletionOptions()
             {
@@ -104,25 +69,7 @@ namespace OpenAIo1ModelsTest
                 // Get C# Dictionary key at index
                 var riskFactorSection = Data.GetMicrosoft2023RiskFactors().Keys.ElementAt(i);
 
-                var promptInstructionsTemplate = $"""
-                    <Context>
-                    Below are Risk Factor {riskFactorSection} section of Microsoft's 10K filings for 2023 and 2024.
-                    Please compare the risk factors from 2023 to 2024 and provide an analysis based
-                    on the following instructions:
-                    </Context>
-
-                    <Risk Factors in Microsoft 2023 10K>
-                    {Data.GetMicrosoft2023RiskFactors()[riskFactorSection]}
-                    </Risk Factors in Microsoft 2023 10K>
-
-                    <Risk Factors in Microsoft 2024 10k>
-                    {Data.GetMicrosoft2024RiskFactors()[riskFactorSection]}
-                    </End of Risk Factors in Microsoft 2024 10K>
-
-                    <Instructions>
-                    {riskInstructions}
-                    </Instructions>
-                    """;
+                var promptInstructions = Prompts.GetFullPromptForSECDocumentAnalysis(i);
 
                 var promptInstructionsChatMessage = new UserChatMessage(promptInstructions);
 
@@ -131,7 +78,7 @@ namespace OpenAIo1ModelsTest
 
                 Console.WriteLine($"Section: {riskFactorSection}");
                 Tokenizer tokenizer = TiktokenTokenizer.CreateForModel("gpt-4");
-                var tokenCount = tokenizer.CountTokens(promptInstructionsTemplate);
+                var tokenCount = tokenizer.CountTokens(promptInstructions);
                 Console.WriteLine($"Prompt Token Count: {tokenCount}");
 
                 var startTime = DateTime.UtcNow;
@@ -144,7 +91,7 @@ namespace OpenAIo1ModelsTest
                 var durationSections = (endTime - startTime).TotalSeconds;
 
                 Console.WriteLine($"Duration: {durationSections} seconds");
-                Console.WriteLine($"Reasoning Tokens: {outputTokenDetails.ReasoningTokenCount}");
+                Console.WriteLine($"Reasoning o1 Tokens: {outputTokenDetails.ReasoningTokenCount}");
                 Console.WriteLine($"Total o1 Model Tokens: {totalTokenCount}");
 
                 // Fix the Markdown table formatting
