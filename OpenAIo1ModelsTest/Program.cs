@@ -64,49 +64,49 @@ namespace OpenAIo1ModelsTest
             Console.WriteLine(string.Empty);
 
             // This can be Parallelized
-            //for (int i = 0; i != Data.GetMicrosoft2023RiskFactors().Count; i++)
-            //{
-            //    // 1) Perform Risk Analysis over SEC Documents using o1
-            //    // Get C# Dictionary key at index
-            //    var riskFactorSection = Data.GetMicrosoft2023RiskFactors().Keys.ElementAt(i);
+            for (int i = 0; i != Data.GetMicrosoft2023RiskFactors().Count; i++)
+            {
+                // 1) Perform Risk Analysis over SEC Documents using o1
+                // Get C# Dictionary key at index
+                var riskFactorSection = Data.GetMicrosoft2023RiskFactors().Keys.ElementAt(i);
 
-            //    var promptInstructions = Prompts.GetFullPromptForSECDocumentAnalysis(i);
+                var promptInstructions = Prompts.GetFullPromptForSECDocumentAnalysis(i);
 
-            //    var promptInstructionsChatMessageSection = new UserChatMessage(promptInstructions);
+                var promptInstructionsChatMessageSection = new UserChatMessage(promptInstructions);
 
-            //    var chatMessagesRiskAnalysis = new List<ChatMessage>();
-            //    chatMessagesRiskAnalysis.Add(promptInstructionsChatMessageSection);
+                var chatMessagesRiskAnalysis = new List<ChatMessage>();
+                chatMessagesRiskAnalysis.Add(promptInstructionsChatMessageSection);
 
-            //    Console.WriteLine($"Section: {riskFactorSection}");
-            //    Tokenizer sectiontokenizer = TiktokenTokenizer.CreateForModel("gpt-4");
-            //    var sectionTokenCount = sectiontokenizer.CountTokens(promptInstructions);
-            //    Console.WriteLine($"Prompt Token Count: {sectionTokenCount}");
+                Console.WriteLine($"Section: {riskFactorSection}");
+                Tokenizer sectionTokenizer = TiktokenTokenizer.CreateForModel("gpt-4");
+                var sectionTokenCount = sectionTokenizer.CountTokens(promptInstructions);
+                Console.WriteLine($"Prompt Token Count: {sectionTokenCount}");
 
-            //    var sectionStartTime = DateTime.UtcNow;
-            //    var sectionResponse = await chatClient.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptions);
-            //    var sectionOutputTokenDetails = sectionResponse.Value.Usage.OutputTokenDetails;
-            //    var sectionTotalTokenCount = sectionResponse.Value.Usage.TotalTokenCount;
+                var sectionStartTime = DateTime.UtcNow;
+                var sectionResponse = await chatClient.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptions);
+                var sectionOutputTokenDetails = sectionResponse.Value.Usage.OutputTokenDetails;
+                var sectionTotalTokenCount = sectionResponse.Value.Usage.TotalTokenCount;
 
-            //    var responseo1RiskAnalysis = sectionResponse.Value.Content.FirstOrDefault()!.Text;
-            //    var sectionEndTime = DateTime.UtcNow;
-            //    var sectionDurationSections = (sectionEndTime - sectionStartTime).TotalSeconds;
+                var responseo1RiskAnalysis = sectionResponse.Value.Content.FirstOrDefault()!.Text;
+                var sectionEndTime = DateTime.UtcNow;
+                var sectionDurationSections = (sectionEndTime - sectionStartTime).TotalSeconds;
 
-            //    Console.WriteLine($"Duration: {sectionDurationSections} seconds");
-            //    Console.WriteLine($"Reasoning o1 Tokens: {sectionOutputTokenDetails.ReasoningTokenCount}");
-            //    Console.WriteLine($"Total o1 Model Tokens: {sectionTotalTokenCount}");
+                Console.WriteLine($"Duration: {sectionDurationSections} seconds");
+                Console.WriteLine($"Reasoning o1 Tokens: {sectionOutputTokenDetails.ReasoningTokenCount}");
+                Console.WriteLine($"Total o1 Model Tokens: {sectionTotalTokenCount}");
 
-            //    // 2) Fix the Markdown table formatting using GPT-4o
-            //    Console.WriteLine("Fixing Markdown Formatting...");
-            //    var chatMessagesGPT4o = new List<ChatMessage>();
-            //    chatMessagesGPT4o.Add($"Fix the following {riskFactorSection} table formatting for proper Markdown: {responseo1RiskAnalysis}");
-            //    var responseGPT4o = await chatClientGPT4o.CompleteChatAsync(chatMessagesGPT4o, completionOptions);
-            //    var llmResponseGPT4o = sectionResponse.Value.Content.FirstOrDefault()!.Text;
+                // 2) Fix the Markdown table formatting using GPT-4o
+                Console.WriteLine("Fixing Markdown Formatting...");
+                var chatMessagesGPT4o = new List<ChatMessage>();
+                chatMessagesGPT4o.Add($"Fix the following {riskFactorSection} table formatting for proper Markdown: {responseo1RiskAnalysis}");
+                var responseGPT4o = await chatClientGPT4o.CompleteChatAsync(chatMessagesGPT4o, completionOptions);
+                var llmResponseGPT4o = sectionResponse.Value.Content.FirstOrDefault()!.Text;
 
-            //    Console.WriteLine($"Creating MD File...{riskFactorSection}.md");
-            //    File.WriteAllText($"{riskFactorSection}.md", llmResponseGPT4o);
-            //    Console.WriteLine(string.Empty);
+                Console.WriteLine($"Creating MD File...{riskFactorSection}.md");
+                File.WriteAllText($"{riskFactorSection}.md", llmResponseGPT4o);
+                Console.WriteLine(string.Empty);
 
-            //} // End of loop over SEC sections
+            } // End of loop over SEC sections
 
             // 3) Analyze the Markdown tables on only extract the relevant risk changes
             Console.WriteLine("Consolidate...Risks into one Markdown file");
