@@ -8,7 +8,6 @@ C# Repository that will:
 * Use OpenAI GPT-4o-2024-08-06 to create a formatted Markdown table of risks
   * File Created: https://github.com/bartczernicki/OpenAIo1ModelsTest/blob/master/OpenAIo1ModelsTest/Output/MicrosoftRiskAnalysis.md  
 
-TODO: Add all risk sections from SEC Report
 
 **Consolidated Important Risk Factor Changes in Microsoft's 2024 10-K Filing**
 
