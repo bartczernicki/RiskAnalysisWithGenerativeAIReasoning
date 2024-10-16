@@ -95,38 +95,70 @@ namespace OpenAIo1ModelsTest
                 // TopLogProbabilityCount = true ? 5 : 1 // Azure OpenAI maximum is 5               
             };
 
-            Console.WriteLine($"Submitting Risk Analysis...");
-            Console.WriteLine(Data.GetMicrosoft2024RiskFactors().Keys.First());
-            Tokenizer tokenizer = TiktokenTokenizer.CreateForModel("gpt-4");
-            var tokenCount = tokenizer.CountTokens(promptInstructions);
-            Console.WriteLine($"Token Count: {tokenCount}");
-
-            var startTime = DateTime.UtcNow;
-            var response = await chatClient.CompleteChatAsync(chatMessages, completionOptions);
-            var outputTokenDetails = response.Value.Usage.OutputTokenDetails;
-            var totalTokenCount = response.Value.Usage.TotalTokenCount;
-
-            var responseo1RiskAnalysis = response.Value.Content.FirstOrDefault()!.Text;
-            var endTime = DateTime.UtcNow;
-            var durationSections = (endTime - startTime).TotalSeconds;
-
-            Console.WriteLine($"Duration: {durationSections} seconds");
-            Console.WriteLine($"Reasoning Tokens: {outputTokenDetails.ReasoningTokenCount}");
-            Console.WriteLine($"Total o1 Model Tokens: {totalTokenCount}");
-
-            // Fix the Markdown table formatting
+            Console.WriteLine($"SUBMITTING RISK ANALYSIS...");
             Console.WriteLine(string.Empty);
-            Console.WriteLine("Fixing Markdown Formatting...");
-            var chatMessagesGPT4o = new List<ChatMessage>();
-            chatMessagesGPT4o.Add($"Fix the following table formatting for proper Markdown: {responseo1RiskAnalysis}");
-            var responseGPT4o = await chatClientGPT4o.CompleteChatAsync(chatMessagesGPT4o, completionOptions);
-            var llmResponseGPT4o = response.Value.Content.FirstOrDefault()!.Text;
 
-            Console.WriteLine(string.Empty);
-            Console.WriteLine("Creating MD File...MicrosoftRiskAnalysis.md");
-            // Convert the Markdown to HTML
-            // var html = Markdown.ToHtml(llmResponseGPT4o);
-            File.WriteAllText("MicrosoftRiskAnalysis.md", llmResponseGPT4o);
+            // This can be Parallelized
+            for (int i = 0; i != Data.GetMicrosoft2023RiskFactors().Count; i++)
+            {
+                // Get C# Dictionary key at index
+                var riskFactorSection = Data.GetMicrosoft2023RiskFactors().Keys.ElementAt(i);
+
+                var promptInstructionsTemplate = $"""
+                    <Context>
+                    Below are Risk Factor {riskFactorSection} section of Microsoft's 10K filings for 2023 and 2024.
+                    Please compare the risk factors from 2023 to 2024 and provide an analysis based
+                    on the following instructions:
+                    </Context>
+
+                    <Risk Factors in Microsoft 2023 10K>
+                    {Data.GetMicrosoft2023RiskFactors()[riskFactorSection]}
+                    </Risk Factors in Microsoft 2023 10K>
+
+                    <Risk Factors in Microsoft 2024 10k>
+                    {Data.GetMicrosoft2024RiskFactors()[riskFactorSection]}
+                    </End of Risk Factors in Microsoft 2024 10K>
+
+                    <Instructions>
+                    {riskInstructions}
+                    </Instructions>
+                    """;
+
+                var promptInstructionsChatMessage = new UserChatMessage(promptInstructions);
+
+                var chatMessagesRiskAnalysis = new List<ChatMessage>();
+                chatMessagesRiskAnalysis.Add(promptInstructionsChatMessage);
+
+                Console.WriteLine($"Section: {riskFactorSection}");
+                Tokenizer tokenizer = TiktokenTokenizer.CreateForModel("gpt-4");
+                var tokenCount = tokenizer.CountTokens(promptInstructionsTemplate);
+                Console.WriteLine($"Prompt Token Count: {tokenCount}");
+
+                var startTime = DateTime.UtcNow;
+                var response = await chatClient.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptions);
+                var outputTokenDetails = response.Value.Usage.OutputTokenDetails;
+                var totalTokenCount = response.Value.Usage.TotalTokenCount;
+
+                var responseo1RiskAnalysis = response.Value.Content.FirstOrDefault()!.Text;
+                var endTime = DateTime.UtcNow;
+                var durationSections = (endTime - startTime).TotalSeconds;
+
+                Console.WriteLine($"Duration: {durationSections} seconds");
+                Console.WriteLine($"Reasoning Tokens: {outputTokenDetails.ReasoningTokenCount}");
+                Console.WriteLine($"Total o1 Model Tokens: {totalTokenCount}");
+
+                // Fix the Markdown table formatting
+                Console.WriteLine("Fixing Markdown Formatting...");
+                var chatMessagesGPT4o = new List<ChatMessage>();
+                chatMessagesGPT4o.Add($"Fix the following {riskFactorSection} table formatting for proper Markdown: {responseo1RiskAnalysis}");
+                var responseGPT4o = await chatClientGPT4o.CompleteChatAsync(chatMessagesGPT4o, completionOptions);
+                var llmResponseGPT4o = response.Value.Content.FirstOrDefault()!.Text;
+
+                Console.WriteLine($"Creating MD File...{riskFactorSection}.md");
+                File.WriteAllText($"{riskFactorSection}.md", llmResponseGPT4o);
+                Console.WriteLine(string.Empty);
+                Console.WriteLine(string.Empty);
+            }
         }
     }
 }
