@@ -6,7 +6,7 @@ C# Repository that will:
   * 2024:  https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/msft-20240630.htm#item_1a_risk_factors 
 * Extract the differences, changes in the "Strategic and Competitive Risks" section
 * Use OpenAI GPT-4o-2024-08-06 to create a formatted Markdown table of risks
-  * File Created: https://github.com/bartczernicki/OpenAIo1ModelsTest/blob/master/OpenAIo1ModelsTest/Output/MicrosoftRiskAnalysis.md  
+  * Individual Section Files Created: https://github.com/bartczernicki/OpenAIo1ModelsTest/tree/master/OpenAIo1ModelsTest/Output
 
 
 **Consolidated Important Risk Factor Changes in Microsoft's 2024 10-K Filing**
