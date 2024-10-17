@@ -48,6 +48,9 @@ namespace OpenAIo1ModelsTest
 
             Console.WriteLine($"SUBMITTING RISK ANALYSIS...");
             Console.WriteLine(string.Empty);
+            var totalDocumentPromptCount = 0;
+            var totalDocumentReasoningTokenCount = 0;
+            var totalDcoumentTotalTokenCount = 0;
 
             // This can be Parallelized
             for (int i = 0; i != Data.GetMicrosoft2023RiskFactors().Count; i++)
@@ -65,8 +68,8 @@ namespace OpenAIo1ModelsTest
 
                 Console.WriteLine($"Section: {riskFactorSection}");
                 Tokenizer sectionTokenizer = TiktokenTokenizer.CreateForModel("gpt-4");
-                var sectionTokenCount = sectionTokenizer.CountTokens(promptInstructions);
-                Console.WriteLine($"Prompt Token Count: {sectionTokenCount}");
+                var sectionPromptTokenCount = sectionTokenizer.CountTokens(promptInstructions);
+                Console.WriteLine($"Prompt Token Count: {sectionPromptTokenCount}");
 
                 // Get new chat client for o1
                 var chatClient = client.GetChatClient(modelDeploymentName);
@@ -86,6 +89,11 @@ namespace OpenAIo1ModelsTest
                 Console.WriteLine($"Reasoning o1 Tokens: {sectionOutputTokenDetails.ReasoningTokenCount}");
                 Console.WriteLine($"Total o1 Model Tokens: {sectionTotalTokenCount}");
 
+                // Update Totals
+                totalDocumentPromptCount += sectionPromptTokenCount;
+                totalDocumentReasoningTokenCount += sectionOutputTokenDetails.ReasoningTokenCount;
+                totalDcoumentTotalTokenCount += sectionTotalTokenCount;
+
                 // 2) Fix the Markdown table formatting using GPT-4o
                 Console.WriteLine("Fixing Markdown Formatting...");
                 var chatMessagesGPT4o = new List<ChatMessage>();
@@ -98,6 +106,11 @@ namespace OpenAIo1ModelsTest
                 Console.WriteLine(string.Empty);
 
             } // End of loop over SEC sections
+
+            // Write out the totals
+            Console.WriteLine($"Total Prompt Token Count: {totalDocumentPromptCount}");
+            Console.WriteLine($"Total Reasoning Token Count: {totalDocumentReasoningTokenCount}");
+            Console.WriteLine($"Total Model Output Token Count: {totalDcoumentTotalTokenCount}");
 
             // 3) Analyze the Markdown tables on only extract the relevant risk changes
             Console.WriteLine("Consolidate...Risks into one Markdown file");
