@@ -1,4 +1,4 @@
-# OpenAIo1ModelsTest
+# Risk Analysis with OpenAI Reasoning
 
 C# Repository that will:
 * Use OpenAI o1 reasoning to compare 2 Microsoft 10-K SEC reports
