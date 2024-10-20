@@ -5,9 +5,9 @@ OpenAI’s o1 model model series, currently including o1-preview and o1-mini, ar
 
 This repository includes a C# Console application that will orchestrate the following Risk Analysis Pipeline below:  
 
-![Risk Analysis Pipeline](https://raw.githubusercontent.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/refs/heads/master/RiskAnalysisWithOpenAIReasoning/Images/RiskAnalysisWithOpenAIReasoning-Pipeline.png)
+![Risk Analysis Pipeline](https://raw.githubusercontent.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/refs/heads/master/RiskAnalysisWithOpenAIReasoning/Images/RiskAnalysisWithOpenAIReasoning-Pipeline.png)  
+--- 
 
---  
 ## Risk Analysis Pipeline Details 
 
 --- 
