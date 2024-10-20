@@ -1,5 +1,7 @@
 # Risk Analysis with OpenAI Reasoning
 
+OpenAI’s o1 model model series, currently including o1-preview and o1-mini, are cutting-edge reasoning engines. Unlike standard language models, they're optimized to handle complex, multi-step challenges that go beyond simple text generation, offering enhanced capabilities for problem-solving and logical reasoning. Additionally, these models include built-in mechanisms ideal for risk analysis, helping to ensure more reliable and safe outputs in critical decision-making tasks.
+
 Console application in C#/.NET that will:
 * Use OpenAI o1-preview or o1-mini reasoning series models to compare 2 Microsoft 10-K SEC reports
   * 2023:  https://www.sec.gov/Archives/edgar/data/789019/000095017023035122/msft-20230630.htm#item_1a_risk_factors 
