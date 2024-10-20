@@ -4,7 +4,7 @@ OpenAI’s o1 model model series, currently including o1-preview and o1-mini, ar
 
 ### Risk Analysis Pipeline
 
-[!Risk Analysis Pipeline](https://raw.githubusercontent.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/refs/heads/master/RiskAnalysisWithOpenAIReasoning/Images/RiskAnalysisWithOpenAIReasoning-Pipeline.png)
+[Risk Analysis Pipeline](https://raw.githubusercontent.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/refs/heads/master/RiskAnalysisWithOpenAIReasoning/Images/RiskAnalysisWithOpenAIReasoning-Pipeline.png)
 
 Console application in C#/.NET that will:
 * Use OpenAI o1-preview or o1-mini reasoning series models to compare 2 Microsoft 10-K SEC reports
