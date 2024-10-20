@@ -9,7 +9,7 @@ Console application in C#/.NET that will:
   * Individual Section Files Created: https://github.com/bartczernicki/OpenAIo1ModelsTest/tree/master/OpenAIo1ModelsTest/Output
 
 
-# **o1-Preview Series Reasoning** Consolidated Important Risk Factor Changes from Microsoft's 2023 and 2024 10-K Filings
+## **o1-Preview Series Reasoning** Consolidated Important Risk Factor Changes from Microsoft's 2023 and 2024 10-K Filings
 
 Below is a consolidated analysis of the significant and impactful risk factor changes between the 2023 and 2024 10-K filings.
 
