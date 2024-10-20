@@ -11,7 +11,7 @@ This repository includes a C# Console application that will orchestrate the foll
 ## Risk Analysis Pipeline Details 
 
 --- 
-## **o1-Preview Series Reasoning** Consolidated Important Risk Factor Changes from Microsoft's 2023 and 2024 10-K Filings
+## Consolidated Important Risk Factor Changes from Microsoft's 2023 and 2024 10-K Filings
 
 Full analysis details: https://github.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/tree/master/RiskAnalysisWithOpenAIReasoning/Output/o1-preview  
 Below is a consolidated analysis of the significant and impactful risk factor changes between the 2023 and 2024 10-K filings.
