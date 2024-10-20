@@ -25,7 +25,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             var gpt4oAzureOpenAIEndpoint = configuration.GetSection("AzureOpenAI")["gpt4oEndpoint"];
             var gpt4oAzureModelDeploymentName = configuration.GetSection("AzureOpenAI")["gpt4oModelDeploymentName"];
 
-
+            // The output directory for the o1 model markdown analysis files
             var o1OutputDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Output", o1AzureModelDeploymentName!);
 
             var retryPolicy = new ClientRetryPolicy(maxRetries: 3);
