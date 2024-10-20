@@ -18,12 +18,12 @@ namespace RiskAnalysisWithOpenAIReasoning
 
             // Retrieve the Azure OpenAI Configuration Section (secrets.json)
             var azureOpenAISection = configuration.GetSection("AzureOpenAI");
-            var azureOpenAIAPIKey = configuration.GetSection("AzureOpenAI")["APIKey"];
-            var azureOpenAIEndpoint = configuration.GetSection("AzureOpenAI")["Endpoint"];
-            var azureModelDeploymentName = configuration.GetSection("AzureOpenAI")["ModelDeploymentName"];
-            var azureOpenAIAPIKeyGPT4o = configuration.GetSection("AzureOpenAI")["APIKeyGPT4o"];
-            var azureOpenAIEndpointGPT4o = configuration.GetSection("AzureOpenAI")["EndpointGPT4o"];
-            var azureModelDeploymentNameGPT4o = configuration.GetSection("AzureOpenAI")["ModelDeploymentNameGPT4o"];
+            var o1AzureOpenAIAPIKey = configuration.GetSection("AzureOpenAI")["o1APIKey"];
+            var o1AzureOpenAIEndpoint = configuration.GetSection("AzureOpenAI")["o1Endpoint"];
+            var o1AzureModelDeploymentName = configuration.GetSection("AzureOpenAI")["o1ModelDeploymentName"];
+            var gpt4oAzureOpenAIAPIKey = configuration.GetSection("AzureOpenAI")["gpt4oAPIKey"];
+            var gpt4oAzureOpenAIEndpoint = configuration.GetSection("AzureOpenAI")["gpt4oEndpoint"];
+            var gpt4oAzureModelDeploymentName = configuration.GetSection("AzureOpenAI")["gpt4oModelDeploymentName"];
 
 
 
@@ -32,12 +32,11 @@ namespace RiskAnalysisWithOpenAIReasoning
             azureOpenAIClientOptions.RetryPolicy = retryPolicy;
             azureOpenAIClientOptions.NetworkTimeout = TimeSpan.FromMinutes(20); // Large Timeout
 
-            Uri azureOpenAIResourceUri = new(azureOpenAIEndpoint!);
-            var azureApiCredential = new System.ClientModel.ApiKeyCredential(azureOpenAIAPIKey!);
+            Uri azureOpenAIResourceUri = new(o1AzureOpenAIEndpoint!);
+            var azureApiCredential = new System.ClientModel.ApiKeyCredential(o1AzureOpenAIAPIKey!);
 
-            var client = new AzureOpenAIClient(azureOpenAIResourceUri, azureApiCredential, azureOpenAIClientOptions);
-            var clientGPT4o = new AzureOpenAIClient(new Uri(azureOpenAIEndpointGPT4o!), new System.ClientModel.ApiKeyCredential(azureOpenAIAPIKeyGPT4o!), azureOpenAIClientOptions);
-            var modelDeploymentName = azureModelDeploymentName;
+            var o1Client = new AzureOpenAIClient(azureOpenAIResourceUri, azureApiCredential, azureOpenAIClientOptions);
+            var gpt4oClient = new AzureOpenAIClient(new Uri(gpt4oAzureOpenAIEndpoint!), new System.ClientModel.ApiKeyCredential(gpt4oAzureOpenAIAPIKey!), azureOpenAIClientOptions);
 
             var completionOptions = new ChatCompletionOptions()
             {
@@ -53,6 +52,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             var totalDcoumentTotalTokenCount = 0;
 
             // This can be Parallelized
+            // Note: this is using one of the risk factors as they are both the same to loop over 
             for (int i = 0; i != Data.GetMicrosoft2023RiskFactors().Count; i++)
             {
                 // 1) Perform Risk Analysis over SEC Documents using o1
@@ -71,10 +71,10 @@ namespace RiskAnalysisWithOpenAIReasoning
                 var sectionPromptTokenCount = sectionTokenizer.CountTokens(promptInstructions);
                 Console.WriteLine($"Prompt Token Count: {sectionPromptTokenCount}");
 
-                // Get new chat client for o1
-                var chatClient = client.GetChatClient(modelDeploymentName);
-                // Get new chat client for gpt-4o
-                var chatClientGPT4o = clientGPT4o.GetChatClient(azureModelDeploymentNameGPT4o);
+                // Get new chat o1Client for o1 model deployment
+                var chatClient = o1Client.GetChatClient(o1AzureModelDeploymentName);
+                // Get new chat o1Client for gpt-4o model deployment
+                var chatClientGPT4o = gpt4oClient.GetChatClient(gpt4oAzureModelDeploymentName);
 
                 var sectionStartTime = DateTime.UtcNow;
                 var sectionResponse = await chatClient.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptions);
@@ -137,8 +137,8 @@ namespace RiskAnalysisWithOpenAIReasoning
 
             var startTime = DateTime.UtcNow;
 
-            // Get new chat client for o1
-            var chatClientRiskAnalysis = client.GetChatClient(modelDeploymentName);
+            // Get new chat o1Client for o1
+            var chatClientRiskAnalysis = o1Client.GetChatClient(o1AzureModelDeploymentName);
 
             var response = await chatClientRiskAnalysis.CompleteChatAsync(chatMessageRiskConsolidation, completionOptions);
             var outputTokenDetails = response.Value.Usage.OutputTokenDetails;
