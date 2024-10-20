@@ -7,7 +7,7 @@ This repository includes a C# Console application that will orchestrate the foll
 
 ![Risk Analysis Pipeline](https://raw.githubusercontent.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/refs/heads/master/RiskAnalysisWithOpenAIReasoning/Images/RiskAnalysisWithOpenAIReasoning-Pipeline.png)
 
---- 
+----
 ## Risk Analysis Pipeline Details 
 
 --- 
