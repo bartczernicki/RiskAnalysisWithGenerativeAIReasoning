@@ -17,7 +17,7 @@ This pipeline performs Risk Analysis over SEC 10-K documents. In simple terms, t
   * 2024:  https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/msft-20240630.htm#item_1a_risk_factors
 
 The image below illustrates how each Risk Factor section in the SEC 10-K documents is compared, analyzed by Generative AI and then finally the table differences persisted.
-![Risk Analysis Risk Factors](https://raw.githubusercontent.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/refs/heads/master/RiskAnalysisWithOpenAIReasoning/Images/RiskAnalysisWithOpenAIReasoning-Pipeline.png)  
+![Risk Analysis Risk Factors](https://raw.githubusercontent.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/refs/heads/master/RiskAnalysisWithOpenAIReasoning/Images/RiskAnalysisWithOpenAIReasoning-RiskFactorSectionExample.png)  
 
 --- 
 ## Consolidated Important Risk Factor Changes from Microsoft's 2023 and 2024 10-K Filings
