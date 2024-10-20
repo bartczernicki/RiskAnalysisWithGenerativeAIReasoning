@@ -1,16 +1,14 @@
 # Risk Analysis with OpenAI Reasoning
 
-## Objective & Pipeline 
-OpenAI’s o1 model model series, currently including o1-preview and o1-mini, are cutting-edge reasoning engines. Unlike standard language models, they're optimized to handle complex, multi-step challenges that go beyond simple text generation, offering enhanced capabilities for problem-solving and logical reasoning. Additionally, these models include built-in mechanisms ideal for risk analysis, helping to ensure more reliable and safe outputs in critical decision-making tasks.
+## Objective & Risk Analysis Pipeline 
+OpenAI’s o1 model model series, currently including o1-preview and o1-mini, are cutting-edge reasoning engines. Unlike standard language models, they're optimized to handle complex, multi-step challenges that go beyond simple text generation, offering enhanced capabilities for problem-solving and logical reasoning. Additionally, these models include built-in mechanisms ideal for risk analysis, helping to ensure more reliable and safe outputs in critical decision-making tasks. 
+
+This repository includes a C# Console application that will orchestrate the following Risk Analysis Pipeline below:  
 
 ![Risk Analysis Pipeline](https://raw.githubusercontent.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/refs/heads/master/RiskAnalysisWithOpenAIReasoning/Images/RiskAnalysisWithOpenAIReasoning-Pipeline.png)
 
-Console application in C#/.NET that will:
-* Use OpenAI o1-preview or o1-mini reasoning series models to compare 2 Microsoft 10-K SEC reports
-  * 2023:  https://www.sec.gov/Archives/edgar/data/789019/000095017023035122/msft-20230630.htm#item_1a_risk_factors 
-  * 2024:  https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/msft-20240630.htm#item_1a_risk_factors 
-* Use OpenAI GPT-4o-2024-08-06 to create a formatted Markdown table of risks
-  * Individual Section Files Created: https://github.com/bartczernicki/OpenAIo1ModelsTest/tree/master/OpenAIo1ModelsTest/Output
+--- 
+## Risk Analysis Pipeline Details 
 
 --- 
 ## **o1-Preview Series Reasoning** Consolidated Important Risk Factor Changes from Microsoft's 2023 and 2024 10-K Filings
