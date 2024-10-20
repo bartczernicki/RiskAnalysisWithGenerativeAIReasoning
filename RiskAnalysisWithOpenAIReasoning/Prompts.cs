@@ -21,7 +21,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             
             Match and align similar risk factors from both years, even if the wording has changed, 
             to accurately reflect modifications. Ensure the table is properly formatted in Markdown and 
-            includes sequential row numbers.
+            includes sequential row numbers. Generate a markdown table without enclosing it in a code block. 
             """;
 
         public static string GetFullPromptForSECDocumentAnalysis(int secDocumentSectionIndex)
@@ -78,6 +78,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             3. Prioritize Relevance: Focus on changes that introduce new risks, significantly alter existing risks, or remove previously critical risks. 
 
             DO NOT include the entire tables, only the relevant and selected significant risk factor changes.
+            Generate a markdown table without enclosing it in a code block. 
             </Instructions>
 
             <Markdown Tables>

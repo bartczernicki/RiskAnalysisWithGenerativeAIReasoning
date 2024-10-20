@@ -104,8 +104,8 @@ namespace RiskAnalysisWithOpenAIReasoning
                 var llmResponseGPT4o = sectionResponse.Value.Content.FirstOrDefault()!.Text;
 
                 // Write out the fixed markdown file
-                Console.WriteLine($"Creating MD File...{riskFactorSection}.md");
-                var markdownRiskFactorSectionPath = Path.Combine(o1OutputDirectory, $"{riskFactorSection}.md");
+                Console.WriteLine($"Creating MD File...{riskFactorSection}.MD");
+                var markdownRiskFactorSectionPath = Path.Combine(o1OutputDirectory, $"{o1AzureModelDeploymentName!.ToUpper()}-{riskFactorSection}.MD");
                 File.WriteAllText(markdownRiskFactorSectionPath, llmResponseGPT4o);
                 Console.WriteLine(string.Empty);
 
@@ -119,8 +119,8 @@ namespace RiskAnalysisWithOpenAIReasoning
             // 3) Analyze the Markdown tables on only extract the relevant risk changes
             Console.WriteLine("Consolidate...Risks into one Markdown file");
 
-            var markdownFiles = Directory.GetFiles(o1OutputDirectory, "*.md");
-            // read each file and extract the table
+            // Read each file and extract the table
+            var markdownFiles = Directory.GetFiles(o1OutputDirectory, "*.MD");
             var markdownTables = new List<string>();
             foreach (var file in markdownFiles)
             {
@@ -156,8 +156,8 @@ namespace RiskAnalysisWithOpenAIReasoning
             Console.WriteLine($"Reasoning o1 Tokens: {outputTokenDetails.ReasoningTokenCount}");
             Console.WriteLine($"Total o1 Model Tokens: {totalTokenCount}");
 
-            Console.WriteLine($"Creating MD File...ConsolidatedRiskAnalysis.md");
-            var markdownConsolidatedRiskAnalysisPath = Path.Combine(o1OutputDirectory, "ConsolidatedRiskAnalysis.md");
+            Console.WriteLine($"Creating MD File...CONSOLIDATEDRISKANALYSIS.MD");
+            var markdownConsolidatedRiskAnalysisPath = Path.Combine(o1OutputDirectory, $"{o1AzureModelDeploymentName!.ToUpper()}-CONSOLIDATEDRISKANALYSIS.MD");
             File.WriteAllText(markdownConsolidatedRiskAnalysisPath, responseRiskConsolidation);
             Console.WriteLine(string.Empty);
         }
