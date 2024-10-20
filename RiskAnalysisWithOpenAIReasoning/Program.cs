@@ -6,7 +6,7 @@ using Microsoft.ML.Tokenizers;
 using ConsoleTables;
 using Markdig;
 
-namespace OpenAIo1ModelsTest
+namespace RiskAnalysisWithOpenAIReasoning
 {
     internal class Program
     {
