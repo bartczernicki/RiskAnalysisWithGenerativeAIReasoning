@@ -4,4 +4,4 @@ Each file (other than the Consolidated Risk Analysis) represents a risk factor s
 Each file is a Markdown Table for easy human comprehension that includes the: Title, 2023 Risk Factor, 2024 Risk Factor and the Differences between the two years.  
 
 The Consolidated Risk Analysis Files combines the sufficiently important risks into one (consolidated) risk file: 
-https://github.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/blob/master/RiskAnalysisWithOpenAIReasoning/Output/o1-mini/O1-PREVIEW-CONSOLIDATEDRISKANALYSIS.MD 
+https://github.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/blob/master/RiskAnalysisWithOpenAIReasoning/Output/o1-preview/O1-PREVIEW-CONSOLIDATEDRISKANALYSIS.MD  
