@@ -20,6 +20,7 @@ The image below illustrates how each Risk Factor section in the SEC 10-K documen
 ![Risk Analysis Risk Factors](https://raw.githubusercontent.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/refs/heads/master/RiskAnalysisWithOpenAIReasoning/Images/RiskAnalysisWithOpenAIReasoning-RiskFactorSectionExample.png)  
 
 Each 10-K Risk Factor section is then consolodiated into a single analysis that only surfaces the sufficiently important risks into a single file. Examples of the consolidated risk analysis are shown below.  
+
 ---  
 
 ## Consolidated Important Risk Factors from Microsoft's 2023 and 2024 10-K Filings
