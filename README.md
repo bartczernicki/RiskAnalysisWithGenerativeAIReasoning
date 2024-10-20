@@ -24,7 +24,7 @@ Below is a consolidated table highlighting the significant and impactful risk fa
 
 ## Summary of Key Changes and Implications
 
-- **Elevated Cybersecurity Risks:** Microsoft's acknowledgment of actual cybersecurity incidents, including those affecting customers, marks a significant shift from potential to realized threats. This elevates the company's risk profile and indicates a need for intensified security measures.
+- **Elevated Cybersecurity Risks:** Microsoft's acknowledgement of actual cybersecurity incidents, including those affecting customers, marks a significant shift from potential to realized threats. This elevates the company's risk profile and indicates a need for intensified security measures.
 
 - **AI-Related Legal and Ethical Challenges:** The expanded discussion on AI reflects heightened awareness of the legal, regulatory, and reputational risks associated with AI development and use. Microsoft's involvement with OpenAI and the mention of specific legislation underscore the importance of navigating AI's complex landscape responsibly.
 
