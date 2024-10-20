@@ -1,16 +1,24 @@
 # Risk Analysis with OpenAI Reasoning
 
-OpenAI’s o1 model model series, currently including o1-preview and o1-mini, are cutting-edge reasoning engines. Unlike standard language models, they're optimized to handle complex, multi-step challenges that go beyond simple text generation, offering enhanced capabilities for problem-solving and logical reasoning. Additionally, these models include built-in mechanisms ideal for risk analysis, helping to ensure more reliable and safe outputs in critical decision-making tasks.
+## Objective & Risk Analysis Pipeline 
+OpenAI’s o1 model model series, currently including **o1-preview** and **o1-mini**, are cutting-edge reasoning engines. Unlike standard language models, they're optimized to handle complex, multi-step challenges that go beyond simple text generation, offering enhanced capabilities for problem-solving and logical reasoning. Additionally, these models include built-in mechanisms ideal for risk analysis, helping to ensure more reliable and safe outputs in critical decision-making tasks. 
 
-Console application in C#/.NET that will:
-* Use OpenAI o1-preview or o1-mini reasoning series models to compare 2 Microsoft 10-K SEC reports
+This repository includes a C# Console application that will orchestrate the following Risk Analysis Pipeline below:  
+
+![Risk Analysis Pipeline](https://raw.githubusercontent.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/refs/heads/master/RiskAnalysisWithOpenAIReasoning/Images/RiskAnalysisWithOpenAIReasoning-Pipeline.png)  
+--- 
+
+## Risk Analysis Pipeline Details 
+
+This pipeline performs Risk Analysis over SEC 10-K documents. In simple terms, the 10-K is a big report that gives investors a clear picture of how well a public company is doing. These reports must be filed with the Securities and Exchange Commission (SEC) annually. Companies also have to disclose any potential risks they face in the 10-K, such as economic challenges, competition, legal issues, or changes in regulations. This helps investors understand what could go wrong with the company and how those risks might affect its future performance. These reports are typically analyzed by: investors, journalists, regulators, credit rating agencies, competitors etc. This makes a 10-K report ideal to validate if Generative AI advanced reasoning can be applied to risk analysis.  
+
+* The following two Microsoft SEC 10-k Documents are used from 2023 and 2024: 
   * 2023:  https://www.sec.gov/Archives/edgar/data/789019/000095017023035122/msft-20230630.htm#item_1a_risk_factors 
-  * 2024:  https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/msft-20240630.htm#item_1a_risk_factors 
-* Use OpenAI GPT-4o-2024-08-06 to create a formatted Markdown table of risks
-  * Individual Section Files Created: https://github.com/bartczernicki/OpenAIo1ModelsTest/tree/master/OpenAIo1ModelsTest/Output
+  * 2024:  https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/msft-20240630.htm#item_1a_risk_factors
 
 
-## **o1-Preview Series Reasoning** Consolidated Important Risk Factor Changes from Microsoft's 2023 and 2024 10-K Filings
+--- 
+## Consolidated Important Risk Factor Changes from Microsoft's 2023 and 2024 10-K Filings
 
 Full analysis details: https://github.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/tree/master/RiskAnalysisWithOpenAIReasoning/Output/o1-preview  
 Below is a consolidated analysis of the significant and impactful risk factor changes between the 2023 and 2024 10-K filings.
