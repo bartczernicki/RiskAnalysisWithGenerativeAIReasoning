@@ -88,5 +88,29 @@ namespace RiskAnalysisWithOpenAIReasoning
 
             return promptTemplate;
         }
+
+        public static string GetFullPromptToApplyRiskMitigation(string consolidatedRiskAnalysis)
+        {
+            // OpenAI o1 (reasoning) Prompt Guide: https://platform.openai.com/docs/guides/reasoning/advice-on-prompting 
+            var fullPromptTemplate = $"""
+            <Context>
+            Below is a consolidated risk analysis of Microsoft's 10K filings for 2023 and 2024. 
+            Only the important and sufficiently impactful risk factor changes have been included in the analysis. 
+            The columns in the Consolidated Risk Analysis Markdown Table are as follows: 
+            Number, Risk Factor, Potential Impact, Key Insights. 
+            </Context>
+            
+            <Consolidated Risk Analysis Markdown Table>
+            {consolidatedRiskAnalysis}
+            </Consolidated Risk Analysis Markdown Table>
+                     
+            <Instructions>
+            Apply the COSO ERM framework to recommend risk mitigation strategies for the consolidated risk analysis. 
+            </Instructions>
+            """;
+
+            return fullPromptTemplate;
+        }
+
     }
 }

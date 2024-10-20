@@ -12,6 +12,9 @@ namespace RiskAnalysisWithOpenAIReasoning
     {
         static async Task Main(string[] args)
         {
+            // 0 - CONFIGURATION 
+            Console.WriteLine($"STEP 0 - CONFIGURATION...");
+
             // Azure OpenAI Configuration from user secrets
             ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
             IConfiguration configuration = configurationBuilder.AddUserSecrets<Program>().Build();
@@ -46,8 +49,10 @@ namespace RiskAnalysisWithOpenAIReasoning
                 // TopLogProbabilityCount = true ? 5 : 1 // Azure OpenAI maximum is 5               
             };
 
-            Console.WriteLine($"SUBMITTING RISK ANALYSIS...");
+            // 1 - RISK ANALYSIS ON RISK FACTOR SECTIONS 
+            Console.WriteLine($"STEP 1-3 - RISK ANALYSIS ON RISK FACTOR SECTIONS...");
             Console.WriteLine(string.Empty);
+
             var totalDocumentPromptCount = 0;
             var totalDocumentReasoningTokenCount = 0;
             var totalDcoumentTotalTokenCount = 0;
@@ -117,7 +122,8 @@ namespace RiskAnalysisWithOpenAIReasoning
             Console.WriteLine($"Total Model Output Token Count: {totalDcoumentTotalTokenCount}");
 
             // 3) Analyze the Markdown tables on only extract the relevant risk changes
-            Console.WriteLine("Consolidate...Risks into one Markdown file");
+            Console.WriteLine($"STEP 4 - CONSOLIDATE INTO A SINGLE RISK ANALYSIS...");
+            Console.WriteLine(string.Empty);
 
             // Read each file and extract the table
             var markdownFiles = Directory.GetFiles(o1OutputDirectory, "*.MD");
@@ -129,7 +135,6 @@ namespace RiskAnalysisWithOpenAIReasoning
             }
 
             var promptConsolidate = Prompts.GetFullPromptToConsolidateImportantRisks(markdownTables);
-
             var promptInstructionsChatMessage = new UserChatMessage(promptConsolidate);
             var chatMessageRiskConsolidation = new List<ChatMessage>();
             chatMessageRiskConsolidation.Add(promptInstructionsChatMessage);
@@ -160,6 +165,27 @@ namespace RiskAnalysisWithOpenAIReasoning
             var markdownConsolidatedRiskAnalysisPath = Path.Combine(o1OutputDirectory, $"{o1AzureModelDeploymentName!.ToUpper()}-CONSOLIDATEDRISKANALYSIS.MD");
             File.WriteAllText(markdownConsolidatedRiskAnalysisPath, responseRiskConsolidation);
             Console.WriteLine(string.Empty);
+
+
+
+            Console.WriteLine($"STEP 5 - APPLY A RISK MITIGATION FRAMEWORK TO CREATE A RISK MITIGATION STRATEGY...");
+            Console.WriteLine(string.Empty);
+
+            var consolidatedRiskAnalysisPath = Path.Combine(o1OutputDirectory, $"{o1AzureModelDeploymentName!.ToUpper()}-CONSOLIDATEDRISKANALYSIS.MD");
+            var consolidatedRiskAnalysis = File.ReadAllText(consolidatedRiskAnalysisPath);
+
+            // Get Prompts
+            var promptApplyRiskMethodology = Prompts.GetFullPromptToApplyRiskMitigation(consolidatedRiskAnalysis);
+            var promptInstructionsApplyRiskMethodologyChatMessage = new UserChatMessage(promptApplyRiskMethodology);
+            var chatMessagesApplyRiskMethodology = new List<ChatMessage>();
+            chatMessagesApplyRiskMethodology.Add(promptInstructionsApplyRiskMethodologyChatMessage);
+            // Execute the o1 Reasoning for creating a Risk Mitigation Strategy
+            var chatClientApplyRiskMethodology = o1Client.GetChatClient(o1AzureModelDeploymentName);
+            var responseApplyRiskMethodology = await chatClientApplyRiskMethodology.CompleteChatAsync(chatMessagesApplyRiskMethodology, completionOptions);
+            var responseApplyRiskMethodologyText = responseApplyRiskMethodology.Value.Content.FirstOrDefault()!.Text;
+
+            var markdownApplyRiskMethodologyPath= Path.Combine(o1OutputDirectory, $"{o1AzureModelDeploymentName!.ToUpper()}-RISKMITIGATIONSTRATEGY.MD");
+            File.WriteAllText(markdownApplyRiskMethodologyPath, responseApplyRiskMethodologyText);
         }
     }
 }
