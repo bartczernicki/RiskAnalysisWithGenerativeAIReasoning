@@ -1,7 +1,7 @@
 # Risk Analysis with OpenAI Reasoning
 
-C# Repository that will:
-* Use OpenAI o1 reasoning to compare 2 Microsoft 10-K SEC reports
+Console application in C#/.NET that will:
+* Use OpenAI o1-preview or o1-mini reasoning series models to compare 2 Microsoft 10-K SEC reports
   * 2023:  https://www.sec.gov/Archives/edgar/data/789019/000095017023035122/msft-20230630.htm#item_1a_risk_factors 
   * 2024:  https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/msft-20240630.htm#item_1a_risk_factors 
 * Extract the differences, changes in the "Strategic and Competitive Risks" section
