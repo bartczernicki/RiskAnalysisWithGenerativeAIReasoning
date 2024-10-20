@@ -20,7 +20,7 @@ The image below illustrates how each Risk Factor section in the SEC 10-K documen
 ![Risk Analysis Risk Factors](https://raw.githubusercontent.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/refs/heads/master/RiskAnalysisWithOpenAIReasoning/Images/RiskAnalysisWithOpenAIReasoning-RiskFactorSectionExample.png)  
 ---
 
-## Consolidated Important Risk Factor Changes from Microsoft's 2023 and 2024 10-K Filings
+## Consolidated Important Risk Factors from Microsoft's 2023 and 2024 10-K Filings
 
 Full analysis details: https://github.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/tree/master/RiskAnalysisWithOpenAIReasoning/Output/o1-preview  
 Below is a consolidated analysis of the significant and impactful risk factor changes between the 2023 and 2024 10-K filings.
@@ -41,7 +41,7 @@ Below is a consolidated analysis of the significant and impactful risk factor ch
 | 12  | Acquisitions Facing Legal Challenges Post-Completion             | Legal challenges to acquisitions, even after completion, may result in altered terms, unwinding of transactions, or operational disruptions. This can lead to additional costs, integration difficulties, and adverse impacts on business operations and financial results.                                                                                             | The 2024 mention of ongoing FTC challenges to completed acquisitions, like Activision Blizzard, indicates that regulatory scrutiny can continue post-acquisition. This increases the risk of strategic uncertainties and potential financial liabilities, highlighting the importance of thorough regulatory compliance and risk assessment during the acquisition process.                                                                           |  
 --- 
 
-## **o1-Mini Series Reasoning** Consolidated Important Risk Factor Changes from Microsoft's 2023 and 2024 10-K Filings
+## Consolidated Important Risk Factors from Microsoft's 2023 and 2024 10-K Filings  
 
 Full analysis details: https://github.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/tree/master/RiskAnalysisWithOpenAIReasoning/Output/o1-mini  
 Below is a consolidated analysis of the significant and impactful risk factor changes between the 2023 and 2024 10-K filings.
