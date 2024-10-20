@@ -11,9 +11,6 @@ C# Repository that will:
 
 # Consolidated Important Risk Factor Changes from Microsoft's 2023 and 2024 10-K Filings
 
-Below is a consolidated table highlighting only the important risk factor changes between Microsoft's 2023 and 2024 10-K filings.  
-This has been generated 100% by OpenAI o1 reasoning model.  
-
 Below is a consolidated table highlighting the significant and impactful risk factor changes from Microsoft's 2023 and 2024 10-K reports. Each risk factor includes an assessment of the potential impact and key insights into why the change is important.
 
 | **Risk Factor Title** | **Change** | **Potential Impact** | **Key Insights** |
