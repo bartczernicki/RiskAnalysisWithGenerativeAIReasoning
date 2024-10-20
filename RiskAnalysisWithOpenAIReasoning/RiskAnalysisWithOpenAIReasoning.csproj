@@ -16,4 +16,10 @@
     <PackageReference Include="Microsoft.ML.Tokenizers" Version="0.22.0-preview.24378.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Output\o1-preview\README.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -26,6 +26,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             var gpt4oAzureModelDeploymentName = configuration.GetSection("AzureOpenAI")["gpt4oModelDeploymentName"];
 
 
+            var o1OutputDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Output", o1AzureModelDeploymentName!);
 
             var retryPolicy = new ClientRetryPolicy(maxRetries: 3);
             AzureOpenAIClientOptions azureOpenAIClientOptions = new AzureOpenAIClientOptions(AzureOpenAIClientOptions.ServiceVersion.V2024_10_01_Preview);
@@ -71,9 +72,9 @@ namespace RiskAnalysisWithOpenAIReasoning
                 var sectionPromptTokenCount = sectionTokenizer.CountTokens(promptInstructions);
                 Console.WriteLine($"Prompt Token Count: {sectionPromptTokenCount}");
 
-                // Get new chat o1Client for o1 model deployment
+                // Get new chat o1Client for o1 model deployment (used for reasoning)
                 var chatClient = o1Client.GetChatClient(o1AzureModelDeploymentName);
-                // Get new chat o1Client for gpt-4o model deployment
+                // Get new chat o1Client for gpt-4o model deployment (used for markdown formatting)
                 var chatClientGPT4o = gpt4oClient.GetChatClient(gpt4oAzureModelDeploymentName);
 
                 var sectionStartTime = DateTime.UtcNow;
@@ -94,6 +95,7 @@ namespace RiskAnalysisWithOpenAIReasoning
                 totalDocumentReasoningTokenCount += sectionOutputTokenDetails.ReasoningTokenCount;
                 totalDcoumentTotalTokenCount += sectionTotalTokenCount;
 
+
                 // 2) Fix the Markdown table formatting using GPT-4o
                 Console.WriteLine("Fixing Markdown Formatting...");
                 var chatMessagesGPT4o = new List<ChatMessage>();
@@ -101,8 +103,10 @@ namespace RiskAnalysisWithOpenAIReasoning
                 var responseGPT4o = await chatClientGPT4o.CompleteChatAsync(chatMessagesGPT4o, completionOptions);
                 var llmResponseGPT4o = sectionResponse.Value.Content.FirstOrDefault()!.Text;
 
+                // Write out the fixed markdown file
                 Console.WriteLine($"Creating MD File...{riskFactorSection}.md");
-                File.WriteAllText($"{riskFactorSection}.md", llmResponseGPT4o);
+                var markdownRiskFactorSectionPath = Path.Combine(o1OutputDirectory, $"{riskFactorSection}.md");
+                File.WriteAllText(markdownRiskFactorSectionPath, llmResponseGPT4o);
                 Console.WriteLine(string.Empty);
 
             } // End of loop over SEC sections
@@ -115,7 +119,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             // 3) Analyze the Markdown tables on only extract the relevant risk changes
             Console.WriteLine("Consolidate...Risks into one Markdown file");
 
-            var markdownFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.md");
+            var markdownFiles = Directory.GetFiles(o1OutputDirectory, "*.md");
             // read each file and extract the table
             var markdownTables = new List<string>();
             foreach (var file in markdownFiles)
@@ -137,7 +141,7 @@ namespace RiskAnalysisWithOpenAIReasoning
 
             var startTime = DateTime.UtcNow;
 
-            // Get new chat o1Client for o1
+            // Get new chat o1Client for o1 model deployment (used for reasoning)
             var chatClientRiskAnalysis = o1Client.GetChatClient(o1AzureModelDeploymentName);
 
             var response = await chatClientRiskAnalysis.CompleteChatAsync(chatMessageRiskConsolidation, completionOptions);
@@ -153,7 +157,8 @@ namespace RiskAnalysisWithOpenAIReasoning
             Console.WriteLine($"Total o1 Model Tokens: {totalTokenCount}");
 
             Console.WriteLine($"Creating MD File...ConsolidatedRiskAnalysis.md");
-            File.WriteAllText($"ConsolidatedRiskAnalysis.md", responseRiskConsolidation);
+            var markdownConsolidatedRiskAnalysisPath = Path.Combine(o1OutputDirectory, "ConsolidatedRiskAnalysis.md");
+            File.WriteAllText(markdownConsolidatedRiskAnalysisPath, responseRiskConsolidation);
             Console.WriteLine(string.Empty);
         }
     }
