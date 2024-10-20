@@ -1,5 +1,6 @@
 # Risk Analysis with OpenAI Reasoning
 
+## Objective & Pipeline 
 OpenAI’s o1 model model series, currently including o1-preview and o1-mini, are cutting-edge reasoning engines. Unlike standard language models, they're optimized to handle complex, multi-step challenges that go beyond simple text generation, offering enhanced capabilities for problem-solving and logical reasoning. Additionally, these models include built-in mechanisms ideal for risk analysis, helping to ensure more reliable and safe outputs in critical decision-making tasks.
 
 ![Risk Analysis Pipeline](https://raw.githubusercontent.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/refs/heads/master/RiskAnalysisWithOpenAIReasoning/Images/RiskAnalysisWithOpenAIReasoning-Pipeline.png)
@@ -11,7 +12,7 @@ Console application in C#/.NET that will:
 * Use OpenAI GPT-4o-2024-08-06 to create a formatted Markdown table of risks
   * Individual Section Files Created: https://github.com/bartczernicki/OpenAIo1ModelsTest/tree/master/OpenAIo1ModelsTest/Output
 
-
+--- 
 ## **o1-Preview Series Reasoning** Consolidated Important Risk Factor Changes from Microsoft's 2023 and 2024 10-K Filings
 
 Full analysis details: https://github.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/tree/master/RiskAnalysisWithOpenAIReasoning/Output/o1-preview  
