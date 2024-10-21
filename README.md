@@ -5,6 +5,7 @@ Contents:
 [Analysis Pipeline Details](#Risk-Analysis-Pipeline-Details)  
 [Consolidated Important Risk Factors: o1-preview Model](#Consolidated-Important-Risk-Factors-using-o1preview-Model)  
 [Consolidated Important Risk Factors: o1-mini Model](#Consolidated-Important-Risk-Factors-using-o1mini-Model)  
+[Apply a Risk Mitigation Strategy Framework](Apply-a-Risk-Mitigation-Strategy-Framework) 
 
 
 ## Objective and Risk Analysis Pipeline
@@ -69,9 +70,9 @@ Below is a consolidated analysis of the significant and impactful risk factor ch
 
 --- 
 
-## Apply a Risk Mitigation Strategy Framework & Create a Risk Mitigation Approach  
+## Apply a Risk Mitigation Strategy Framework 
 
-OpenAI o1 reasoning models can not only can craft a multi-step risk analysis, but can also apply a risk mitigation strategy framework to craft a strategy document:  
+OpenAI o1 reasoning models can not only can craft a multi-step risk analysis, but can also apply a risk mitigation strategy framework to draft a strategic approach. Below is a sample output using the OpenAI o1 series to apply the COSO ERM Framework on the consolidated risk analysis from the Microsoft SEC 10-K Documents:  
 
 **Applying the COSO ERM Framework to Mitigate Identified Risks**
 
