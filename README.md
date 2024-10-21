@@ -4,6 +4,8 @@ Contents:
 [Objective and Risk Analysis Pipeline](#Objective-and-Risk-Analysis-Pipeline)  
 [Analysis Pipeline Details](#Risk-Analysis-Pipeline-Details)  
 [Consolidated Important Risk Factors: o1-preview Model](#Consolidated-Important-Risk-Factors-using-o1preview-Model)  
+[Consolidated Important Risk Factors: o1-mini Model](#Consolidated-Important-Risk-Factors-using-o1mini-Model)  
+
 
 ## Objective and Risk Analysis Pipeline
 OpenAI’s o1 model model series, currently including **o1-preview** and **o1-mini**, are cutting-edge reasoning engines. Unlike standard language models, they're optimized to handle complex, multi-step challenges that go beyond simple text generation, offering enhanced capabilities for problem-solving and logical reasoning. Additionally, these models include built-in mechanisms ideal for risk analysis, helping to ensure more reliable and safe outputs in critical decision-making tasks. 
@@ -49,7 +51,7 @@ Below is a consolidated analysis of the significant and impactful risk factor ch
 | 12  | Acquisitions Facing Legal Challenges Post-Completion             | Legal challenges to acquisitions, even after completion, may result in altered terms, unwinding of transactions, or operational disruptions. This can lead to additional costs, integration difficulties, and adverse impacts on business operations and financial results.                                                                                             | The 2024 mention of ongoing FTC challenges to completed acquisitions, like Activision Blizzard, indicates that regulatory scrutiny can continue post-acquisition. This increases the risk of strategic uncertainties and potential financial liabilities, highlighting the importance of thorough regulatory compliance and risk assessment during the acquisition process.                                                                           |  
 --- 
 
-## Consolidated Important Risk Factors from Microsoft's 2023 and 2024 10-K Filings - o1-mini Model
+## Consolidated Important Risk Factors using o1mini Model
 
 Full analysis details: https://github.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/tree/master/RiskAnalysisWithOpenAIReasoning/Output/o1-mini  
 Below is a consolidated analysis of the significant and impactful risk factor changes between the 2023 and 2024 10-K filings.
