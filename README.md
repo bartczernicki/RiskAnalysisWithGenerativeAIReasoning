@@ -31,6 +31,9 @@ The image below illustrates how each Risk Factor section in the SEC 10-K documen
 
 Each 10-K Risk Factor section is then consolidated into a single analysis that only surfaces the sufficiently important risks into a single file. Examples of the consolidated risk analysis are shown below.  
 
+> [!NOTE]
+> Currently this application has "hard-coded" the SEC 10-K documents in a Data object. This was done to simplify and focus on the Generative AI risk analysis. There are many solutions like Azure Document Intelligence, that can provide the document segmantation to extract the **Risk Factor** sections dynamically.  
+
 ---  
 
 ## Consolidated Important Risk Factors using o1preview Model
