@@ -17,7 +17,55 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Output\o1-mini\O1-MINI-CONSOLIDATEDRISKANALYSIS.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Output\o1-mini\O1-MINI-CYBERSECURITY, DATA PRIVACY, AND PLATFORM ABUSE RISKS.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Output\o1-mini\O1-MINI-GENERAL RISKS.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Output\o1-mini\O1-MINI-INTELLECTUAL PROPERTY RISKS.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Output\o1-mini\O1-MINI-LEGAL, REGULATORY, AND LITIGATION RISKS.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Output\o1-mini\O1-MINI-OPERATIONAL RISKS.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Output\o1-mini\O1-MINI-RISKS RELATING TO THE EVOLUTION OF OUR BUSINESS.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Output\o1-mini\O1-MINI-STRATEGIC AND COMPETITIVE RISKS.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Output\o1-mini\README.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Output\o1-preview\O1-PREVIEW-CONSOLIDATEDRISKANALYSIS.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Output\o1-preview\O1-PREVIEW-CYBERSECURITY, DATA PRIVACY, AND PLATFORM ABUSE RISKS.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Output\o1-preview\O1-PREVIEW-GENERAL RISKS.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Output\o1-preview\O1-PREVIEW-INTELLECTUAL PROPERTY RISKS.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Output\o1-preview\O1-PREVIEW-LEGAL, REGULATORY, AND LITIGATION RISKS.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Output\o1-preview\O1-PREVIEW-OPERATIONAL RISKS.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Output\o1-preview\O1-PREVIEW-RISKS RELATING TO THE EVOLUTION OF OUR BUSINESS.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Output\o1-preview\O1-PREVIEW-STRATEGIC AND COMPETITIVE RISKS.MD">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Output\o1-preview\README.MD">
