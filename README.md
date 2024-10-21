@@ -5,7 +5,7 @@ Contents:
 [Analysis Pipeline Details](#Risk-Analysis-Pipeline-Details)  
 [Consolidated Important Risk Factors: o1-preview Model](#Consolidated-Important-Risk-Factors-using-o1preview-Model)  
 [Consolidated Important Risk Factors: o1-mini Model](#Consolidated-Important-Risk-Factors-using-o1mini-Model)  
-[Apply a Risk Mitigation Strategy Framework](Apply-a-Risk-Mitigation-Strategy-Framework) 
+[Apply a Risk Mitigation Strategy Framework](#Apply-a-Risk-Mitigation-Strategy-Framework) 
 
 
 ## Objective and Risk Analysis Pipeline
