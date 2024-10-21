@@ -3,7 +3,7 @@
 Contents:  
 [## Objective & Risk Analysis Pipeline]
 
-## Objective & Risk Analysis Pipeline 
+##Objective & Risk Analysis Pipeline  
 OpenAI’s o1 model model series, currently including **o1-preview** and **o1-mini**, are cutting-edge reasoning engines. Unlike standard language models, they're optimized to handle complex, multi-step challenges that go beyond simple text generation, offering enhanced capabilities for problem-solving and logical reasoning. Additionally, these models include built-in mechanisms ideal for risk analysis, helping to ensure more reliable and safe outputs in critical decision-making tasks. 
 
 This repository includes a C# Console application that will orchestrate the following Risk Analysis Pipeline below:  
