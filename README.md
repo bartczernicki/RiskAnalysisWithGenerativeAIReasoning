@@ -22,7 +22,7 @@ This repository includes a C# Console application that will orchestrate the foll
 
 This pipeline performs Risk Analysis over SEC 10-K documents. In simple terms, the 10-K is a big report that gives investors a clear picture of how well a public company is doing. These reports must be filed with the Securities and Exchange Commission (SEC) annually. Companies also have to disclose any potential risks they face in the 10-K, such as economic challenges, competition, legal issues, or changes in regulations. This helps investors understand what could go wrong with the company and how those risks might affect its future performance. These reports are typically analyzed by: investors, journalists, regulators, credit rating agencies, competitors etc. This makes a 10-K report ideal to validate if Generative AI advanced reasoning can be applied to risk analysis.  
 
-* The following two Microsoft SEC 10-k Documents are used from 2023 and 2024. Links below specify the Risk Factors areas:  
+* The following two Microsoft SEC 10-k Documents are used from 2023 and 2024. Links below illustrate the Risk Factors areas:  
   * 2023:  https://www.sec.gov/Archives/edgar/data/789019/000095017023035122/msft-20230630.htm#item_1a_risk_factors 
   * 2024:  https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/msft-20240630.htm#item_1a_risk_factors
 
