@@ -35,6 +35,7 @@ Notice that each section contains several groups and certain risk factors do not
 > [!NOTE]
 > Currently this application has "hard-coded" the SEC 10-K documents in a Data object. This was done to simplify and focus on the Generative AI risk analysis. There are many solutions like Azure Document Intelligence, that can provide the document segmantation to extract the **Risk Factor** sections dynamically.  
 
+![Consolidated Risk Analysis](https://raw.githubusercontent.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/refs/heads/master/RiskAnalysisWithOpenAIReasoning/Images/RiskAnalysisWithOpenAIReasoning-ConsolidatedRiskFactorsExample.png)  
 ---  
 
 ## Consolidated Important Risk Factors using o1preview Model
