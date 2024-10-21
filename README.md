@@ -3,7 +3,7 @@
 Contents:  
 [Objective and Risk Analysis Pipeline](#Objective-and-Risk-Analysis-Pipeline)  
 [Analysis Pipeline Details](#Risk-Analysis-Pipeline-Details)  
-[Consolidated Important Risk Factors - o1-preview Model](#Consolidated-Important-Risk-Factors-o1-preview-Model)  
+[Consolidated Important Risk Factors: o1-preview Model](#Consolidated-Important-Risk-Factors-using-o1preview-Model)  
 
 ## Objective and Risk Analysis Pipeline
 OpenAI’s o1 model model series, currently including **o1-preview** and **o1-mini**, are cutting-edge reasoning engines. Unlike standard language models, they're optimized to handle complex, multi-step challenges that go beyond simple text generation, offering enhanced capabilities for problem-solving and logical reasoning. Additionally, these models include built-in mechanisms ideal for risk analysis, helping to ensure more reliable and safe outputs in critical decision-making tasks. 
@@ -28,7 +28,7 @@ Each 10-K Risk Factor section is then consolidated into a single analysis that o
 
 ---  
 
-## Consolidated Important Risk Factors - o1-preview Model
+## Consolidated Important Risk Factors using o1preview Model
 
 Full analysis details: https://github.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/tree/master/RiskAnalysisWithOpenAIReasoning/Output/o1-preview  
 Below is a consolidated analysis of the significant and impactful risk factor changes between the 2023 and 2024 10-K filings.
