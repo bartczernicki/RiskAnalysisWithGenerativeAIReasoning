@@ -29,7 +29,8 @@ This pipeline performs Risk Analysis over SEC 10-K documents. In simple terms, t
 The image below illustrates how each Risk Factor section in the SEC 10-K documents is compared, analyzed by Generative AI and then finally the table differences are materialized in Markdown format. 
 ![Risk Analysis Risk Factors](https://raw.githubusercontent.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/refs/heads/master/RiskAnalysisWithOpenAIReasoning/Images/RiskAnalysisWithOpenAIReasoning-RiskFactorSectionExample.png)  
 
-Each 10-K Risk Factor section is then consolidated into a single analysis that only surfaces the sufficiently important risks into a single file. Examples of the consolidated risk analysis are shown below.  
+Navigate to the Risk Factor Analysis Sections: https://github.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/tree/master/RiskAnalysisWithOpenAIReasoning/Output/o1-preview  
+Notice that each section contains several groups and certain risk factors do not change much (minor wording). An optimization would be to surface the sufficiently important risk factor changes. In the next pipeline step, all of the generated 10-K Risk Factor sections are then consolidated into a single analysis that only surfaces the relevant risks into a single file. Examples of the single consolidated risk analysis are shown below for each respective o1 series model. 
 
 > [!NOTE]
 > Currently this application has "hard-coded" the SEC 10-K documents in a Data object. This was done to simplify and focus on the Generative AI risk analysis. There are many solutions like Azure Document Intelligence, that can provide the document segmantation to extract the **Risk Factor** sections dynamically.  
