@@ -26,7 +26,7 @@ The pipeline in the repository performs Risk Analysis over SEC 10-K documents. I
   * 2023:  https://www.sec.gov/Archives/edgar/data/789019/000095017023035122/msft-20230630.htm#item_1a_risk_factors 
   * 2024:  https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/msft-20240630.htm#item_1a_risk_factors
 
-The image below illustrates how each Risk Factor section in the SEC 10-K documents is compared, analyzed by Generative AI and then finally the table differences are materialized in Markdown format. 
+The image below illustrates how each Risk Factor section in the SEC 10-K documents is compared, analyzed by Generative AI. The identified differences are materialized as Markdown table files. This allows for experts to analyze the intermediate step and the workflow to begin from this state; bypassing the initial processing.  
 ![Risk Analysis Risk Factors](https://raw.githubusercontent.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/refs/heads/master/RiskAnalysisWithOpenAIReasoning/Images/RiskAnalysisWithOpenAIReasoning-RiskFactorSectionExample.png)  
 
 Navigate to the Risk Factor Analysis Sections: https://github.com/bartczernicki/RiskAnalysisWithOpenAIReasoning/tree/master/RiskAnalysisWithOpenAIReasoning/Output/o1-preview  
