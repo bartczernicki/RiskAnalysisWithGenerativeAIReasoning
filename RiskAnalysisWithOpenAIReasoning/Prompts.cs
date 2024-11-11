@@ -24,9 +24,9 @@ namespace RiskAnalysisWithOpenAIReasoning
             includes sequential row numbers. Generate a markdown table without enclosing it in a code block. 
             """;
 
-        public static string GetFullPromptForSECDocumentAnalysis(int secDocumentSectionIndex)
+        public static string GetFullPromptForSECDocumentAnalysis(string riskFactorSection)
         {
-            var riskFactorSection = Data.GetMicrosoft2023RiskFactors().Keys.ElementAt(secDocumentSectionIndex);
+            //var riskFactorSection = Data.GetMicrosoft2023RiskFactors().Keys.ElementAt(secDocumentSectionIndex);
 
             // OpenAI o1 (reasoning) Prompt Guide: https://platform.openai.com/docs/guides/reasoning/advice-on-prompting 
             var fullPromptTemplate = $"""

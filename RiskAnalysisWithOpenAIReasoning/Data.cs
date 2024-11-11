@@ -412,6 +412,7 @@ Our business depends on our ability to attract and retain talented employees. Ou
         {
             var riskFactors = new Dictionary<string, string>();
 
+            // Manually builds the Risk Factors, Can be automated with other Doc Intelligence
             riskFactors.Add("STRATEGIC AND COMPETITIVE RISKS",
                 """
                 We face intense competition across all markets for our products and services, which may lead to lower revenue or operating margins.

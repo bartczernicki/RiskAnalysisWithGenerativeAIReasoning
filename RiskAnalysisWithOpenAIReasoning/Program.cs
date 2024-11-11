@@ -21,12 +21,12 @@ namespace RiskAnalysisWithOpenAIReasoning
 
             // Retrieve the Azure OpenAI Configuration Section (secrets.json)
             var azureOpenAISection = configuration.GetSection("AzureOpenAI");
-            var o1AzureOpenAIAPIKey = configuration.GetSection("AzureOpenAI")["o1APIKey"];
             var o1AzureOpenAIEndpoint = configuration.GetSection("AzureOpenAI")["o1Endpoint"];
             var o1AzureModelDeploymentName = configuration.GetSection("AzureOpenAI")["o1ModelDeploymentName"];
-            var gpt4oAzureOpenAIAPIKey = configuration.GetSection("AzureOpenAI")["gpt4oAPIKey"];
+            var o1AzureOpenAIAPIKey = configuration.GetSection("AzureOpenAI")["o1APIKey"];
             var gpt4oAzureOpenAIEndpoint = configuration.GetSection("AzureOpenAI")["gpt4oEndpoint"];
             var gpt4oAzureModelDeploymentName = configuration.GetSection("AzureOpenAI")["gpt4oModelDeploymentName"];
+            var gpt4oAzureOpenAIAPIKey = configuration.GetSection("AzureOpenAI")["gpt4oAPIKey"];
 
             // The output directory for the o1 model markdown analysis files
             var o1OutputDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Output", o1AzureModelDeploymentName!);
@@ -58,24 +58,27 @@ namespace RiskAnalysisWithOpenAIReasoning
             var totalDcoumentTotalTokenCount = 0;
 
             // This can be Parallelized
-            // Note: this is using one of the risk factors as they are both the same to loop over 
-            for (int i = 0; i != Data.GetMicrosoft2023RiskFactors().Count; i++)
+            // Note: this is using one of the risk factors as they are both the same to loop over
+            //ParallelOptions options = new ParallelOptions { MaxDegreeOfParallelism = 1 };
+            // Parallel.ForEach(Data.GetMicrosoft2023RiskFactors(), options, async (riskFactorSection) =>
+            foreach (var riskFactorSection in Data.GetMicrosoft2023RiskFactors())
             {
                 // 1) Perform Risk Analysis over SEC Documents using o1
-                // Get C# Dictionary key at index
-                var riskFactorSection = Data.GetMicrosoft2023RiskFactors().Keys.ElementAt(i);
+                Console.WriteLine($"Section: {riskFactorSection.Key}");
 
-                var promptInstructions = Prompts.GetFullPromptForSECDocumentAnalysis(i);
+                // Retrieve the Risk Factor Section
+                //var riskFactorSection = Data.GetMicrosoft2023RiskFactors().Keys.ElementAt(i);
 
+                // Create a Chat Message with Prompt Instructions for the Risk Factor Section
+                var promptInstructions = Prompts.GetFullPromptForSECDocumentAnalysis(riskFactorSection.Key);
                 var promptInstructionsChatMessageSection = new UserChatMessage(promptInstructions);
-
                 var chatMessagesRiskAnalysis = new List<ChatMessage>();
                 chatMessagesRiskAnalysis.Add(promptInstructionsChatMessageSection);
 
-                Console.WriteLine($"Section: {riskFactorSection}");
+                // Calculate the Prompt Tokens
                 Tokenizer sectionTokenizer = TiktokenTokenizer.CreateForModel("gpt-4");
                 var sectionPromptTokenCount = sectionTokenizer.CountTokens(promptInstructions);
-                Console.WriteLine($"Prompt Token Count: {sectionPromptTokenCount}");
+                Console.WriteLine($"Section: {riskFactorSection.Key} - Prompt Token Count: {sectionPromptTokenCount}");
 
                 // Get new chat o1Client for o1 model deployment (used for reasoning)
                 var chatClient = o1Client.GetChatClient(o1AzureModelDeploymentName);
@@ -83,7 +86,8 @@ namespace RiskAnalysisWithOpenAIReasoning
                 var chatClientGPT4o = gpt4oClient.GetChatClient(gpt4oAzureModelDeploymentName);
 
                 var sectionStartTime = DateTime.UtcNow;
-                var sectionResponse = await chatClient.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptions);
+                var sectionResponse = await 
+                    chatClient.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptions);
                 var sectionOutputTokenDetails = sectionResponse.Value.Usage.OutputTokenDetails;
                 var sectionTotalTokenCount = sectionResponse.Value.Usage.TotalTokenCount;
 
@@ -104,22 +108,23 @@ namespace RiskAnalysisWithOpenAIReasoning
                 // 2) Fix the Markdown table formatting using GPT-4o
                 Console.WriteLine("Fixing Markdown Formatting...");
                 var chatMessagesGPT4o = new List<ChatMessage>();
-                chatMessagesGPT4o.Add($"Fix the following {riskFactorSection} table formatting for proper Markdown: {responseo1RiskAnalysis}");
+                chatMessagesGPT4o.Add($"Fix the following {riskFactorSection.Key} table formatting for proper Markdown: {responseo1RiskAnalysis}");
                 var responseGPT4o = await chatClientGPT4o.CompleteChatAsync(chatMessagesGPT4o, completionOptions);
                 var llmResponseGPT4o = sectionResponse.Value.Content.FirstOrDefault()!.Text;
 
                 // Write out the fixed markdown file
-                Console.WriteLine($"Creating MD File...{riskFactorSection}.MD");
-                var markdownRiskFactorSectionPath = Path.Combine(o1OutputDirectory, $"{o1AzureModelDeploymentName!.ToUpper()}-{riskFactorSection}.MD");
+                Console.WriteLine($"Creating MD File...{riskFactorSection.Key}.MD");
+                var markdownRiskFactorSectionPath = Path.Combine(o1OutputDirectory, $"{o1AzureModelDeploymentName!.ToUpper()}-{riskFactorSection.Key}.MD");
                 File.WriteAllText(markdownRiskFactorSectionPath, llmResponseGPT4o);
                 Console.WriteLine(string.Empty);
-
-            } // End of loop over SEC sections
+            };//); // End of loop over SEC sections
 
             // Write out the totals
             Console.WriteLine($"Total Prompt Token Count: {totalDocumentPromptCount}");
             Console.WriteLine($"Total Reasoning Token Count: {totalDocumentReasoningTokenCount}");
             Console.WriteLine($"Total Model Output Token Count: {totalDcoumentTotalTokenCount}");
+            Console.WriteLine(String.Empty);
+            Console.WriteLine(String.Empty);
 
             // 3) Analyze the Markdown tables on only extract the relevant risk changes
             Console.WriteLine($"STEP 4 - CONSOLIDATE INTO A SINGLE RISK ANALYSIS...");
