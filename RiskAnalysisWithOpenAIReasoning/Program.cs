@@ -76,7 +76,7 @@ namespace RiskAnalysisWithOpenAIReasoning
                 chatMessagesRiskAnalysis.Add(promptInstructionsChatMessageSection);
 
                 // Calculate the Prompt Tokens
-                Tokenizer sectionTokenizer = TiktokenTokenizer.CreateForModel("gpt-4");
+                Tokenizer sectionTokenizer = TiktokenTokenizer.CreateForModel("gpt-4o");
                 var sectionPromptTokenCount = sectionTokenizer.CountTokens(promptInstructions);
                 Console.WriteLine($"Section: {riskFactorSection.Key} - Prompt Token Count: {sectionPromptTokenCount}");
 
@@ -86,8 +86,8 @@ namespace RiskAnalysisWithOpenAIReasoning
                 var chatClientGPT4o = gpt4oClient.GetChatClient(gpt4oAzureModelDeploymentName);
 
                 var sectionStartTime = DateTime.UtcNow;
-                var sectionResponse = await 
-                    chatClient.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptions);
+                var sectionResponse = //await 
+                    chatClient.CompleteChat(chatMessagesRiskAnalysis, completionOptions);
                 var sectionOutputTokenDetails = sectionResponse.Value.Usage.OutputTokenDetails;
                 var sectionTotalTokenCount = sectionResponse.Value.Usage.TotalTokenCount;
 
@@ -145,7 +145,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             chatMessageRiskConsolidation.Add(promptInstructionsChatMessage);
 
             Console.WriteLine("Consolidating Markdown...");
-            Tokenizer tokenizer = TiktokenTokenizer.CreateForModel("gpt-4");
+            Tokenizer tokenizer = TiktokenTokenizer.CreateForModel("gpt-4o");
             var tokenCount = tokenizer.CountTokens(promptConsolidate);
             Console.WriteLine($"Prompt Token Count: {tokenCount}");
 
