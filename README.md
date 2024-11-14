@@ -5,8 +5,8 @@ Contents:
 [Risk Analysis Pipeline Details](#Risk-Analysis-Pipeline-Details)  
 [Consolidated Important Risk Factors: o1-preview Model](#Consolidated-Important-Risk-Factors-using-o1preview-Model)  
 [Consolidated Important Risk Factors: o1-mini Model](#Consolidated-Important-Risk-Factors-using-o1mini-Model)  
-[Apply a Risk Mitigation Strategy Framework: Example using COSO ERM Framework](#Apply-a-Risk-Mitigation-Strategy-Framework) 
-
+[Apply a Risk Mitigation Strategy Framework: Example using COSO ERM Framework](#Apply-a-Risk-Mitigation-Strategy-Framework)  
+[Get Started](#Get-Started)  
 
 ## Objective and Risk Analysis Pipeline
 OpenAI’s o1 model model series, currently including **o1-preview** and **o1-mini**, are cutting-edge reasoning engines. Unlike standard language models, they're optimized to handle complex, multi-step challenges that go beyond simple text generation, offering enhanced capabilities for problem-solving and logical reasoning. Additionally, these models include built-in mechanisms ideal for risk analysis, helping to ensure more reliable and safe outputs in critical decision-making tasks.
@@ -502,4 +502,31 @@ Applying the COSO ERM framework allows Microsoft to comprehensively address each
 
 --- 
 
+## Get Started
 
+### Requirements
+* .NET 8.x SDK Installed
+* Azure OpenAI API Access: (OpenAI Access will work as well) either o1-mini/o1 and GPT-4o models deployed and API key
+* Visual Studio 2022(+) if debugging the solution with an IDE 
+
+### Clone the repo
+```
+git clone https://github.com/bartczernicki/RiskAnalysisWithOpenAIReasoning.git
+```
+
+### Add this to the Secrets.json (Right Click on VS Project -> Manage User Secrets) and run the console application
+```javascript
+{
+  "AzureOpenAI": {
+    "AzureOpenAIType": "PAYGO",
+
+    "o1Endpoint": "https://YOURAZUREOPENAIENDPOINT.openai.azure.com/"
+    "o1ModelDeploymentName": "o1-preview",
+    "o1APIKey": "YOURAZUREOPENAIKEY",
+
+    "gpt4oEndpoint": "https://YOURAZUREOPENAIENDPOINT.openai.azure.com/"
+    "gpt4oModelDeploymentName": "gpt-4o-2024-08-06-global",
+    "gpt4oAPIKey": "YOURAZUREOPENAIKEY"
+  }
+}
+```
