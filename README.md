@@ -505,7 +505,7 @@ Applying the COSO ERM framework allows Microsoft to comprehensively address each
 ## Get Started
 
 ### Requirements
-* .NET 8.x SDK Installed
+* .NET 9.x SDK Installed: https://dotnet.microsoft.com/en-us/download/dotnet/9.0  
 * Azure OpenAI API Access: (OpenAI Access will work as well) either o1-mini/o1 and GPT-4o models deployed and API key
 * Visual Studio 2022(+) if debugging the solution with an IDE 
 
