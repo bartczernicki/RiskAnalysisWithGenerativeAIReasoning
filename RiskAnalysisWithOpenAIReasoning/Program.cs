@@ -57,14 +57,19 @@ namespace RiskAnalysisWithOpenAIReasoning
             var totalDocumentReasoningTokenCount = 0;
             var totalDcoumentTotalTokenCount = 0;
 
+            // Lock object to sync multiple threads
+            // Note: This is just a simple hack to get Console to show messages in order
+            var lockObject = new object();
+
             // This can be Parallelized
             // Note: this is using one of the risk factors as they are both the same to loop over
-            //ParallelOptions options = new ParallelOptions { MaxDegreeOfParallelism = 1 };
-            // Parallel.ForEach(Data.GetMicrosoft2023RiskFactors(), options, async (riskFactorSection) =>
-            foreach (var riskFactorSection in Data.GetMicrosoft2023RiskFactors())
+            ParallelOptions options = new ParallelOptions { MaxDegreeOfParallelism = 6 };
+            var cancellationToken = new CancellationTokenSource();
+            await Parallel.ForEachAsync(Data.GetMicrosoft2023RiskFactors(), options, async (riskFactorSection, cancellationToken) =>
+            //foreach (var riskFactorSection in Data.GetMicrosoft2023RiskFactors())
             {
                 // 1) Perform Risk Analysis over SEC Documents using o1
-                Console.WriteLine($"Section: {riskFactorSection.Key}");
+                Console.WriteLine($"Starting to Process Section: {riskFactorSection.Key}");
 
                 // Retrieve the Risk Factor Section
                 //var riskFactorSection = Data.GetMicrosoft2023RiskFactors().Keys.ElementAt(i);
@@ -75,10 +80,10 @@ namespace RiskAnalysisWithOpenAIReasoning
                 var chatMessagesRiskAnalysis = new List<ChatMessage>();
                 chatMessagesRiskAnalysis.Add(promptInstructionsChatMessageSection);
 
-                // Calculate the Prompt Tokens
+                // Calculate the Prompt Tokens for Section
                 Tokenizer sectionTokenizer = TiktokenTokenizer.CreateForModel("gpt-4o");
                 var sectionPromptTokenCount = sectionTokenizer.CountTokens(promptInstructions);
-                Console.WriteLine($"Section: {riskFactorSection.Key} - Prompt Token Count: {sectionPromptTokenCount}");
+                // Console.WriteLine($"Section: {riskFactorSection.Key} - Prompt Token Count: {sectionPromptTokenCount}");
 
                 // Get new chat o1Client for o1 model deployment (used for reasoning)
                 var chatClient = o1Client.GetChatClient(o1AzureModelDeploymentName);
@@ -86,8 +91,7 @@ namespace RiskAnalysisWithOpenAIReasoning
                 var chatClientGPT4o = gpt4oClient.GetChatClient(gpt4oAzureModelDeploymentName);
 
                 var sectionStartTime = DateTime.UtcNow;
-                var sectionResponse = //await 
-                    chatClient.CompleteChat(chatMessagesRiskAnalysis, completionOptions);
+                var sectionResponse = await chatClient.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptions);
                 var sectionOutputTokenDetails = sectionResponse.Value.Usage.OutputTokenDetails;
                 var sectionTotalTokenCount = sectionResponse.Value.Usage.TotalTokenCount;
 
@@ -95,31 +99,47 @@ namespace RiskAnalysisWithOpenAIReasoning
                 var sectionEndTime = DateTime.UtcNow;
                 var sectionDurationSections = (sectionEndTime - sectionStartTime).TotalSeconds;
 
-                Console.WriteLine($"Duration: {sectionDurationSections} seconds");
-                Console.WriteLine($"Reasoning o1 Tokens: {sectionOutputTokenDetails.ReasoningTokenCount}");
-                Console.WriteLine($"Total o1 Model Tokens: {sectionTotalTokenCount}");
-
-                // Update Totals
-                totalDocumentPromptCount += sectionPromptTokenCount;
-                totalDocumentReasoningTokenCount += sectionOutputTokenDetails.ReasoningTokenCount;
-                totalDcoumentTotalTokenCount += sectionTotalTokenCount;
-
+                // Update Totals (lock for multiple threads)
+                lock(lockObject)
+                {
+                    totalDocumentPromptCount += sectionPromptTokenCount;
+                    totalDocumentReasoningTokenCount += sectionOutputTokenDetails.ReasoningTokenCount;
+                    totalDcoumentTotalTokenCount += sectionTotalTokenCount;
+                }
 
                 // 2) Fix the Markdown table formatting using GPT-4o
-                Console.WriteLine("Fixing Markdown Formatting...");
+                // Console.WriteLine("Fixing Markdown Formatting...");
                 var chatMessagesGPT4o = new List<ChatMessage>();
                 chatMessagesGPT4o.Add($"Fix the following {riskFactorSection.Key} table formatting for proper Markdown: {responseo1RiskAnalysis}");
                 var responseGPT4o = await chatClientGPT4o.CompleteChatAsync(chatMessagesGPT4o, completionOptions);
                 var llmResponseGPT4o = sectionResponse.Value.Content.FirstOrDefault()!.Text;
 
                 // Write out the fixed markdown file
-                Console.WriteLine($"Creating MD File...{riskFactorSection.Key}.MD");
+                // Console.WriteLine($"Creating MD File...{riskFactorSection.Key}.MD");
                 var markdownRiskFactorSectionPath = Path.Combine(o1OutputDirectory, $"{o1AzureModelDeploymentName!.ToUpper()}-{riskFactorSection.Key}.MD");
                 File.WriteAllText(markdownRiskFactorSectionPath, llmResponseGPT4o);
+
+                // Write out all of the Sections Processes
+                lock(lockObject)
+                {
+                    Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"Finished Processing Section: {riskFactorSection.Key}");
+                    Console.WriteLine($"Duration: {sectionDurationSections} seconds");
+                    Console.WriteLine($"Prompt Token Count (section): {sectionPromptTokenCount}");
+                    Console.WriteLine($"Reasoning o1 Tokens (section): {sectionOutputTokenDetails.ReasoningTokenCount}");
+                    Console.WriteLine($"Total o1 Model Tokens (section): {sectionTotalTokenCount}");
+                    Console.WriteLine($"Created MD File...{riskFactorSection.Key}.MD");
+                    Console.ResetColor();
+                    Console.WriteLine();
+                }
+
                 Console.WriteLine(string.Empty);
-            };//); // End of loop over SEC sections
+            }); // End of parallel loop over SEC sections
 
             // Write out the totals
+            Console.WriteLine(String.Empty);
+            Console.WriteLine($"Overall Job Totals");
             Console.WriteLine($"Total Prompt Token Count: {totalDocumentPromptCount}");
             Console.WriteLine($"Total Reasoning Token Count: {totalDocumentReasoningTokenCount}");
             Console.WriteLine($"Total Model Output Token Count: {totalDcoumentTotalTokenCount}");
@@ -166,14 +186,13 @@ namespace RiskAnalysisWithOpenAIReasoning
             Console.WriteLine($"Reasoning o1 Tokens: {outputTokenDetails.ReasoningTokenCount}");
             Console.WriteLine($"Total o1 Model Tokens: {totalTokenCount}");
 
-            Console.WriteLine($"Creating MD File...CONSOLIDATEDRISKANALYSIS.MD");
             var markdownConsolidatedRiskAnalysisPath = Path.Combine(o1OutputDirectory, $"{o1AzureModelDeploymentName!.ToUpper()}-CONSOLIDATEDRISKANALYSIS.MD");
             File.WriteAllText(markdownConsolidatedRiskAnalysisPath, responseRiskConsolidation);
+            Console.WriteLine($"Created MD File...CONSOLIDATEDRISKANALYSIS.MD");
             Console.WriteLine(string.Empty);
 
-
-
             Console.WriteLine($"STEP 5 - APPLY A RISK MITIGATION FRAMEWORK TO CREATE A RISK MITIGATION STRATEGY...");
+            Console.WriteLine($"Created MD File...RISKMITIGATIONSTRATEGY.MD");
             Console.WriteLine(string.Empty);
 
             var consolidatedRiskAnalysisPath = Path.Combine(o1OutputDirectory, $"{o1AzureModelDeploymentName!.ToUpper()}-CONSOLIDATEDRISKANALYSIS.MD");
