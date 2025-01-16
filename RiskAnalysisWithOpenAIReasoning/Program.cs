@@ -33,6 +33,7 @@ namespace RiskAnalysisWithOpenAIReasoning
 
             var retryPolicy = new ClientRetryPolicy(maxRetries: 3);
             AzureOpenAIClientOptions azureOpenAIClientOptions = new AzureOpenAIClientOptions(AzureOpenAIClientOptions.ServiceVersion.V2024_10_21);
+            
             azureOpenAIClientOptions.RetryPolicy = retryPolicy;
             azureOpenAIClientOptions.NetworkTimeout = TimeSpan.FromMinutes(20); // Large Timeout
 
