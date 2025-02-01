@@ -5,6 +5,7 @@ using System.ClientModel.Primitives;
 using Microsoft.ML.Tokenizers;
 using ConsoleTables;
 using Markdig;
+using Azure;
 
 namespace RiskAnalysisWithOpenAIReasoning
 {
@@ -31,23 +32,28 @@ namespace RiskAnalysisWithOpenAIReasoning
             // The output directory for the o1 model markdown analysis files
             var o1OutputDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Output", o1AzureModelDeploymentName!);
 
-            var retryPolicy = new ClientRetryPolicy(maxRetries: 3);
-            AzureOpenAIClientOptions azureOpenAIClientOptions = new AzureOpenAIClientOptions(AzureOpenAIClientOptions.ServiceVersion.V2024_10_21);
-            
+            var retryPolicy = new ClientRetryPolicy(maxRetries: 5);
+            var azureOpenAIClientOptions = new AzureOpenAIClientOptions(AzureOpenAIClientOptions.ServiceVersion.V2024_10_21);
+            var azureOpenAIClientOptionsReasoning = new AzureOpenAIClientOptions(AzureOpenAIClientOptions.ServiceVersion.V2024_10_21);
+
             azureOpenAIClientOptions.RetryPolicy = retryPolicy;
             azureOpenAIClientOptions.NetworkTimeout = TimeSpan.FromMinutes(20); // Large Timeout
 
+            azureOpenAIClientOptionsReasoning.RetryPolicy = retryPolicy;
+            azureOpenAIClientOptionsReasoning.NetworkTimeout = TimeSpan.FromMinutes(20); // Large Timeout
+            azureOpenAIClientOptionsReasoning.Transport = new HttpClientPipelineTransport(new HttpClient(new ReplaceUriForAzureReasoning()));
+
             Uri azureOpenAIResourceUri = new(o1AzureOpenAIEndpoint!);
-            var azureApiCredential = new System.ClientModel.ApiKeyCredential(o1AzureOpenAIAPIKey!);
-            
-            var o1Client = new AzureOpenAIClient(azureOpenAIResourceUri, azureApiCredential, azureOpenAIClientOptions);
+            var azureApiCredentialReasoning = new AzureKeyCredential(o1AzureOpenAIAPIKey!);
+
+            var reasoningClient = new AzureOpenAIClient(azureOpenAIResourceUri, azureApiCredentialReasoning, azureOpenAIClientOptionsReasoning);
             var gpt4oClient = new AzureOpenAIClient(new Uri(gpt4oAzureOpenAIEndpoint!), new System.ClientModel.ApiKeyCredential(gpt4oAzureOpenAIAPIKey!), azureOpenAIClientOptions);
 
             var completionOptions = new ChatCompletionOptions()
             {
                 // Temperature = 1f,
                 EndUserId = "o1Testing",
-                // TopLogProbabilityCount = true ? 5 : 1 // Azure OpenAI maximum is 5               
+                MaxOutputTokenCount = 16000,           
             };
 
             // 1 - RISK ANALYSIS ON RISK FACTOR SECTIONS 
@@ -86,13 +92,13 @@ namespace RiskAnalysisWithOpenAIReasoning
                 var sectionPromptTokenCount = sectionTokenizer.CountTokens(promptInstructions);
                 // Console.WriteLine($"Section: {riskFactorSection.Key} - Prompt Token Count: {sectionPromptTokenCount}");
 
-                // Get new chat o1Client for o1 model deployment (used for reasoning)
-                var chatClient = o1Client.GetChatClient(o1AzureModelDeploymentName);
-                // Get new chat o1Client for gpt-4o model deployment (used for markdown formatting)
+                // Get new chat reasoningClient for o1 model deployment (used for reasoning)
+                var chatClientReasoning = reasoningClient.GetChatClient(o1AzureModelDeploymentName);
+                // Get new chat reasoningClient for gpt-4o model deployment (used for markdown formatting)
                 var chatClientGPT4o = gpt4oClient.GetChatClient(gpt4oAzureModelDeploymentName);
 
                 var sectionStartTime = DateTime.UtcNow;
-                var sectionResponse = await chatClient.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptions);
+                var sectionResponse = await chatClientReasoning.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptions);
                 var sectionOutputTokenDetails = sectionResponse.Value.Usage.OutputTokenDetails;
                 var sectionTotalTokenCount = sectionResponse.Value.Usage.TotalTokenCount;
 
@@ -118,6 +124,11 @@ namespace RiskAnalysisWithOpenAIReasoning
                 // Write out the fixed markdown file
                 // Console.WriteLine($"Creating MD File...{riskFactorSection.Key}.MD");
                 var markdownRiskFactorSectionPath = Path.Combine(o1OutputDirectory, $"{o1AzureModelDeploymentName!.ToUpper()}-{riskFactorSection.Key}.MD");
+                // Create directory if it doesn't exit
+                if (!Directory.Exists(o1OutputDirectory))
+                {
+                    Directory.CreateDirectory(o1OutputDirectory);
+                }
                 File.WriteAllText(markdownRiskFactorSectionPath, llmResponseGPT4o);
 
                 // Write out all of the Sections Processes
@@ -172,8 +183,8 @@ namespace RiskAnalysisWithOpenAIReasoning
 
             var startTime = DateTime.UtcNow;
 
-            // Get new chat o1Client for o1 model deployment (used for reasoning)
-            var chatClientRiskAnalysis = o1Client.GetChatClient(o1AzureModelDeploymentName);
+            // Get new chat reasoningClient for o1 model deployment (used for reasoning)
+            var chatClientRiskAnalysis = reasoningClient.GetChatClient(o1AzureModelDeploymentName);
 
             var response = await chatClientRiskAnalysis.CompleteChatAsync(chatMessageRiskConsolidation, completionOptions);
             var outputTokenDetails = response.Value.Usage.OutputTokenDetails;
@@ -205,7 +216,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             var chatMessagesApplyRiskMethodology = new List<ChatMessage>();
             chatMessagesApplyRiskMethodology.Add(promptInstructionsApplyRiskMethodologyChatMessage);
             // Execute the o1 Reasoning for creating a Risk Mitigation Strategy
-            var chatClientApplyRiskMethodology = o1Client.GetChatClient(o1AzureModelDeploymentName);
+            var chatClientApplyRiskMethodology = reasoningClient.GetChatClient(o1AzureModelDeploymentName);
             var responseApplyRiskMethodology = await chatClientApplyRiskMethodology.CompleteChatAsync(chatMessagesApplyRiskMethodology, completionOptions);
             var responseApplyRiskMethodologyText = responseApplyRiskMethodology.Value.Content.FirstOrDefault()!.Text;
 
