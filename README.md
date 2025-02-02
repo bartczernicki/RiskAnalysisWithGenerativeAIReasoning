@@ -1,4 +1,4 @@
-# Risk Analysis with OpenAI Reasoning
+# Risk Analysis with Generative AI Reasoning
 
 Contents:  
 [Objective and Risk Analysis Pipeline](#Objective-and-Risk-Analysis-Pipeline)  
