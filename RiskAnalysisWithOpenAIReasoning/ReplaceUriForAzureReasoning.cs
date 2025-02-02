@@ -34,11 +34,11 @@ namespace RiskAnalysisWithOpenAIReasoning
 
                 if ((modelString == "o1") || (modelString == "o3-mini"))
                 {
-                    // 1) Change the Request URI to support the new 2024-12-01-preview API Version
+                    // 1) Change the Request URI to support the new 2025-01-01-preview API Version
                     var apiVersionKey = "api-version";
                     var uriBuilder = new UriBuilder(request.RequestUri!);
                     var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-                    query[apiVersionKey] = "2024-12-01-preview";
+                    query[apiVersionKey] = "2025-01-01-preview";
                     uriBuilder.Query = query.ToString();
                     request.RequestUri = uriBuilder.Uri;
 

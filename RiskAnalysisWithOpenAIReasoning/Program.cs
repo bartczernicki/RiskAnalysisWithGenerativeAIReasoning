@@ -38,11 +38,13 @@ namespace RiskAnalysisWithOpenAIReasoning
             var azureOpenAIClientOptionsReasoning = new AzureOpenAIClientOptions(AzureOpenAIClientOptions.ServiceVersion.V2024_10_21);
 
             azureOpenAIClientOptions.RetryPolicy = retryPolicy;
-            azureOpenAIClientOptions.NetworkTimeout = TimeSpan.FromMinutes(20); // Large Timeout
+            azureOpenAIClientOptions.NetworkTimeout = TimeSpan.FromMinutes(30); // Large Timeout
 
             azureOpenAIClientOptionsReasoning.RetryPolicy = retryPolicy;
             azureOpenAIClientOptionsReasoning.NetworkTimeout = TimeSpan.FromMinutes(20); // Large Timeout
-            azureOpenAIClientOptionsReasoning.Transport = new HttpClientPipelineTransport(new HttpClient(new ReplaceUriForAzureReasoning()));
+            var reasoningHttpClient = new HttpClient(new ReplaceUriForAzureReasoning());
+            reasoningHttpClient.Timeout = TimeSpan.FromMinutes(30);
+            azureOpenAIClientOptionsReasoning.Transport = new HttpClientPipelineTransport(reasoningHttpClient);
 
             Uri azureOpenAIResourceUri = new(o1AzureOpenAIEndpoint!);
             var azureApiCredentialReasoning = new AzureKeyCredential(o1AzureOpenAIAPIKey!);
@@ -196,7 +198,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             // Get new chat reasoningClient for o1 model deployment (used for reasoning)
             var chatClientRiskAnalysis = reasoningClient.GetChatClient(o1AzureModelDeploymentName);
 
-            var response = await chatClientRiskAnalysis.CompleteChatAsync(chatMessageRiskConsolidation, completionOptions);
+            var response = await chatClientRiskAnalysis.CompleteChatAsync(chatMessageRiskConsolidation, completionOptionsReasoning);
             var outputTokenDetails = response.Value.Usage.OutputTokenDetails;
             var totalTokenCount = response.Value.Usage.TotalTokenCount;
 
@@ -227,7 +229,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             chatMessagesApplyRiskMethodology.Add(promptInstructionsApplyRiskMethodologyChatMessage);
             // Execute the o1 Reasoning for creating a Risk Mitigation Strategy
             var chatClientApplyRiskMethodology = reasoningClient.GetChatClient(o1AzureModelDeploymentName);
-            var responseApplyRiskMethodology = await chatClientApplyRiskMethodology.CompleteChatAsync(chatMessagesApplyRiskMethodology, completionOptions);
+            var responseApplyRiskMethodology = await chatClientApplyRiskMethodology.CompleteChatAsync(chatMessagesApplyRiskMethodology, completionOptionsReasoning);
             var responseApplyRiskMethodologyText = responseApplyRiskMethodology.Value.Content.FirstOrDefault()!.Text;
 
             var markdownApplyRiskMethodologyPath= Path.Combine(o1OutputDirectory, $"{o1AzureModelDeploymentName!.ToUpper()}-RISKMITIGATIONSTRATEGY.MD");
