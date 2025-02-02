@@ -6,6 +6,7 @@ using Microsoft.ML.Tokenizers;
 using ConsoleTables;
 using Markdig;
 using Azure;
+using System.ComponentModel.DataAnnotations;
 
 namespace RiskAnalysisWithOpenAIReasoning
 {
@@ -52,8 +53,15 @@ namespace RiskAnalysisWithOpenAIReasoning
             var completionOptions = new ChatCompletionOptions()
             {
                 // Temperature = 1f,
-                EndUserId = "o1Testing",
+                EndUserId = "GPT4o",
                 MaxOutputTokenCount = 16000,           
+            };
+
+            var completionOptionsReasoning = new ChatCompletionOptions()
+            {
+                // Temperature = 1f,
+                EndUserId = "o1_o3_Reasoning",
+                MaxOutputTokenCount = 32000,
             };
 
             // 1 - RISK ANALYSIS ON RISK FACTOR SECTIONS 
@@ -83,8 +91,10 @@ namespace RiskAnalysisWithOpenAIReasoning
 
                 // Create a Chat Message with Prompt Instructions for the Risk Factor Section
                 var promptInstructions = Prompts.GetFullPromptForSECDocumentAnalysis(riskFactorSection.Key);
+                var promptSystemMessage = new SystemChatMessage("Formatting re-enabled");
                 var promptInstructionsChatMessageSection = new UserChatMessage(promptInstructions);
                 var chatMessagesRiskAnalysis = new List<ChatMessage>();
+                chatMessagesRiskAnalysis.Add(promptSystemMessage);
                 chatMessagesRiskAnalysis.Add(promptInstructionsChatMessageSection);
 
                 // Calculate the Prompt Tokens for Section
@@ -98,7 +108,7 @@ namespace RiskAnalysisWithOpenAIReasoning
                 var chatClientGPT4o = gpt4oClient.GetChatClient(gpt4oAzureModelDeploymentName);
 
                 var sectionStartTime = DateTime.UtcNow;
-                var sectionResponse = await chatClientReasoning.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptions);
+                var sectionResponse = await chatClientReasoning.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptionsReasoning);
                 var sectionOutputTokenDetails = sectionResponse.Value.Usage.OutputTokenDetails;
                 var sectionTotalTokenCount = sectionResponse.Value.Usage.TotalTokenCount;
 
