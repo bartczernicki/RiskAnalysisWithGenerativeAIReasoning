@@ -80,4 +80,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Output\DeepSeek-R1\" />
+  </ItemGroup>
+
 </Project>

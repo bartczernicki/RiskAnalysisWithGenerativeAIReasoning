@@ -7,6 +7,8 @@ using ConsoleTables;
 using Markdig;
 using Azure;
 using System.ComponentModel.DataAnnotations;
+using OpenAI;
+using System.ClientModel;
 
 namespace RiskAnalysisWithOpenAIReasoning
 {
@@ -29,6 +31,11 @@ namespace RiskAnalysisWithOpenAIReasoning
             var gpt4oAzureOpenAIEndpoint = configuration.GetSection("AzureOpenAI")["gpt4oEndpoint"];
             var gpt4oAzureModelDeploymentName = configuration.GetSection("AzureOpenAI")["gpt4oModelDeploymentName"];
             var gpt4oAzureOpenAIAPIKey = configuration.GetSection("AzureOpenAI")["gpt4oAPIKey"];
+            // Retrieve the DeepSeek Configuration Section (secrets.json)
+            var deepSeekEndpoint = configuration.GetSection("DeepSeek")["DeepSeekAPIEndpoint"];
+            var deepSeekDeploymentName = "DeepSeek-R1";
+            o1AzureModelDeploymentName = deepSeekDeploymentName;
+            var deepSeekAPIKey = configuration.GetSection("DeepSeek")["DeepSeekAPIKey"];
 
             // The output directory for the o1 model markdown analysis files
             var o1OutputDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Output", o1AzureModelDeploymentName!);
@@ -43,14 +50,39 @@ namespace RiskAnalysisWithOpenAIReasoning
             azureOpenAIClientOptionsReasoning.RetryPolicy = retryPolicy;
             azureOpenAIClientOptionsReasoning.NetworkTimeout = TimeSpan.FromMinutes(20); // Large Timeout
             var reasoningHttpClient = new HttpClient(new ReplaceUriForAzureReasoning());
-            reasoningHttpClient.Timeout = TimeSpan.FromMinutes(30);
+            reasoningHttpClient.Timeout = TimeSpan.FromMinutes(20);
             azureOpenAIClientOptionsReasoning.Transport = new HttpClientPipelineTransport(reasoningHttpClient);
 
             Uri azureOpenAIResourceUri = new(o1AzureOpenAIEndpoint!);
             var azureApiCredentialReasoning = new AzureKeyCredential(o1AzureOpenAIAPIKey!);
 
+            // Azure OpenAI Clients
             var reasoningClient = new AzureOpenAIClient(azureOpenAIResourceUri, azureApiCredentialReasoning, azureOpenAIClientOptionsReasoning);
             var gpt4oClient = new AzureOpenAIClient(new Uri(gpt4oAzureOpenAIEndpoint!), new System.ClientModel.ApiKeyCredential(gpt4oAzureOpenAIAPIKey!), azureOpenAIClientOptions);
+            
+            // DeepSeek Client
+            // var localDeepSeekUri = new Uri("http://192.168.1.212:1234/v1/");
+            var localDeepSeekUri = new Uri(deepSeekEndpoint!); // Local DeepSeek
+            var localDeepSeekClientOptions = new OpenAIClientOptions { Endpoint = localDeepSeekUri };
+            localDeepSeekClientOptions.RetryPolicy = retryPolicy;
+            localDeepSeekClientOptions.NetworkTimeout = TimeSpan.FromMinutes(20); // Large Timeout
+            var apiCredential = new ApiKeyCredential(deepSeekAPIKey!); // No API Key needed for local DeepSeek 
+            var localDeepSeekClient = new OpenAIClient(apiCredential, localDeepSeekClientOptions);
+            // var localDeepSeekChatClient = localDeepSeekClient.GetChatClient("deepseek-r1-distill-qwen-32b");
+            var localDeepSeekChatClient = localDeepSeekClient.GetChatClient("DeepSeek-R1");
+            // TODO: DELETE THIS CODE WHEN DEEPSEEK IS FIXED
+            //var chatMessages = new List<ChatMessage>();
+            //chatMessages.Add(new SystemChatMessage("Help with decisions"));
+            //chatMessages.Add(new UserChatMessage("What is the answer to life, the universe, and everything?"));
+
+            //foreach (var content in localDeepSeekChatClient.CompleteChatStreaming(chatMessages))
+            //{
+            //    // Console.Write(content.ContentUpdate[0].Text);
+            //    if (content.ContentUpdate.Count > 0)
+            //    {
+            //        Console.Write(content.ContentUpdate[0].Text);
+            //    }
+            //}
 
             var completionOptions = new ChatCompletionOptions()
             {
@@ -62,9 +94,15 @@ namespace RiskAnalysisWithOpenAIReasoning
             var completionOptionsReasoning = new ChatCompletionOptions()
             {
                 // Temperature = 1f,
-                EndUserId = "o1_o3_Reasoning",
+                EndUserId = "Azure_Reasoning",
                 MaxOutputTokenCount = 32000,
             };
+
+            // Test 
+            //var result = await localDeepSeekChatClient.CompleteChatAsync(chatMessages, completionOptionsReasoning);
+            //var resultString = result.Value.Content.FirstOrDefault()!.Text;
+            //var finalResult = Helpers.GetChatCompletionResultWithoutThinkingTokens(resultString);
+
 
             // 1 - RISK ANALYSIS ON RISK FACTOR SECTIONS 
             Console.WriteLine($"STEP 1-3 - RISK ANALYSIS ON RISK FACTOR SECTIONS...");
@@ -105,16 +143,26 @@ namespace RiskAnalysisWithOpenAIReasoning
                 // Console.WriteLine($"Section: {riskFactorSection.Key} - Prompt Token Count: {sectionPromptTokenCount}");
 
                 // Get new chat reasoningClient for o1 model deployment (used for reasoning)
-                var chatClientReasoning = reasoningClient.GetChatClient(o1AzureModelDeploymentName);
+                // var chatClientReasoning = reasoningClient.GetChatClient(o1AzureModelDeploymentName);
+
                 // Get new chat reasoningClient for gpt-4o model deployment (used for markdown formatting)
                 var chatClientGPT4o = gpt4oClient.GetChatClient(gpt4oAzureModelDeploymentName);
 
                 var sectionStartTime = DateTime.UtcNow;
+
+                // Azure OpenAI Reasoning
+                //var sectionResponse = await chatClientReasoning.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptionsReasoning);
+
+                // DeepSeek Reasoning
+                var chatClientReasoning = localDeepSeekClient.GetChatClient("DeepSeek-R1");
                 var sectionResponse = await chatClientReasoning.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptionsReasoning);
+                
                 var sectionOutputTokenDetails = sectionResponse.Value.Usage.OutputTokenDetails;
                 var sectionTotalTokenCount = sectionResponse.Value.Usage.TotalTokenCount;
 
-                var responseo1RiskAnalysis = sectionResponse.Value.Content.FirstOrDefault()!.Text;
+                var responseo1RiskAnalysis = Helpers.GetChatCompletionResultWithoutThinkingTokens(
+                    sectionResponse.Value.Content.FirstOrDefault()!.Text);
+
                 var sectionEndTime = DateTime.UtcNow;
                 var sectionDurationSections = (sectionEndTime - sectionStartTime).TotalSeconds;
 
@@ -196,13 +244,14 @@ namespace RiskAnalysisWithOpenAIReasoning
             var startTime = DateTime.UtcNow;
 
             // Get new chat reasoningClient for o1 model deployment (used for reasoning)
-            var chatClientRiskAnalysis = reasoningClient.GetChatClient(o1AzureModelDeploymentName);
-
+            // var chatClientRiskAnalysis = reasoningClient.GetChatClient(o1AzureModelDeploymentName);
+            var chatClientRiskAnalysis = localDeepSeekClient.GetChatClient("DeepSeek-R1");
             var response = await chatClientRiskAnalysis.CompleteChatAsync(chatMessageRiskConsolidation, completionOptionsReasoning);
+
             var outputTokenDetails = response.Value.Usage.OutputTokenDetails;
             var totalTokenCount = response.Value.Usage.TotalTokenCount;
 
-            var responseRiskConsolidation = response.Value.Content.FirstOrDefault()!.Text;
+            var responseRiskConsolidation = Helpers.GetChatCompletionResultWithoutThinkingTokens(response.Value.Content.FirstOrDefault()!.Text);
             var endTime = DateTime.UtcNow;
             var durationSections = (endTime - startTime).TotalSeconds;
 
