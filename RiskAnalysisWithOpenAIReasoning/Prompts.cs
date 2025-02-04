@@ -10,18 +10,17 @@ namespace RiskAnalysisWithOpenAIReasoning
     {
         // Convert to get-only properties
         public static string RiskAnalysisInstructions { get; } = @"""
-            Please compare the risk factors from 2023 to 2024 by creating a Markdown table that shows
-            the changes in risk factors between the two years. The Markdown compliant table should include the
-            following columns:
-            1. Title, a brief summary Title for the Risk Factor
-            2. 2023 Risk Factor Summary: A brief summary of the risk factor from the 2023 10-K report.
-            3. 2024 Risk Factor Summary: A brief summary of the risk factor from the 2024 10-K report.
-            4. Change, description of the change between 2023 and 2024. 
-            Describe how the risk factor has evolved, specifying if it is new, modified, or removed. 
-            
-            Match and align similar risk factors from both years, even if the wording has changed, 
-            to accurately reflect modifications. Ensure the table is properly formatted in Markdown and 
-            includes sequential row numbers. Generate a markdown table without enclosing it in a code block. 
+            Compare the risk factors from the 2023 and 2024 10-K SEC documents and highlight their evolution.
+            Instructions:
+            Create a Markdown table (without enclosing it in a code block) that includes the following columns:
+
+            Row Number: Sequential numbering for each risk factor comparison.
+            Title: A concise title summarizing the risk factor.
+            2023 Risk Factor Summary: A brief summary of the risk factor as described in the 2023 report.
+            2024 Risk Factor Summary: A brief summary of the risk factor as described in the 2024 report.
+            Change: A description of how the risk factor has evolved from 2023 to 2024. Indicate whether it is new, modified, or removed, and provide details on any changes.
+
+            Match and align similar risk factors from both years, even if the wording differs, to ensure an accurate comparison.
             """;
 
         public static string GetFullPromptForSECDocumentAnalysis(string riskFactorSection)
@@ -29,14 +28,15 @@ namespace RiskAnalysisWithOpenAIReasoning
             //var riskFactorSection = Data.GetMicrosoft2023RiskFactors().Keys.ElementAt(secDocumentSectionIndex);
 
             // OpenAI o1 (reasoning) Prompt Guide: https://platform.openai.com/docs/guides/reasoning/advice-on-prompting 
-            var fullPromptTemplate = $"""
+            var fullPromptTemplate = $"""                    
+            <Instructions>
+            {Prompts.RiskAnalysisInstructions}
+            </Instructions>
+
             <Context>
             Below are Risk Factor section of Microsoft's 10K filings for 2023 and 2024.
-            Please compare the Risk Factors from 2023 to 2024 and provide an analysis based
-            on the following instructions:
             </Context>
-            
-            
+
             <Risk Factors in Microsoft 2023 10K>
             {Data.GetMicrosoft2023RiskFactors()[riskFactorSection]}
             </Risk Factors in Microsoft 2023 10K>
@@ -44,10 +44,6 @@ namespace RiskAnalysisWithOpenAIReasoning
             <Risk Factors in Microsoft 2024 10k>
             {Data.GetMicrosoft2024RiskFactors()[riskFactorSection]}
             </End of Risk Factors in Microsoft 2024 10K>
-            
-            <Instructions>
-            {Prompts.RiskAnalysisInstructions}
-            </Instructions>
             """;
 
             return fullPromptTemplate;
@@ -60,29 +56,28 @@ namespace RiskAnalysisWithOpenAIReasoning
 
             var promptTemplate = $"""
             <Instructions>
-            You HAVE extracted risk factor changes from multiple sections of the 10K filings in the following format: 
-            1. Title, a brief summary Title for the Risk Factor
-            2. 2023 Risk Factor Summary: A brief summary of the risk factor from the 2023 10-K report.
-            3. 2024 Risk Factor Summary: A brief summary of the risk factor from the 2024 10-K report.
-            4. Change, description of the change between 2023 and 2024. 
+            You have extracted risk factor changes from multiple sections of 10-K filings. Each risk factor includes:
+            Title: A brief title for the risk factor.
+            2023 Risk Factor Summary: A brief summary from the 2023 10-K report.
+            2024 Risk Factor Summary: A brief summary from the 2024 10-K report.
+            Change: A description of the differences between 2023 and 2024.
 
-            Below is a list of "Risk Analysis Tables" you HAVE extracted from the 10-K filings. 
-            Please perform a comprehensive risk analysis by consolidating only the significant and 
-            impactful risk factor changes into a single Markdown table. 
-            For each selected significant Risk Factor: 
-            1. Assess the Potential Impact: Evaluate how the change may affect the company's risk profile, operations, financial performance, or strategic direction. 
-            2. Highlight Key Insights: Provide a brief analysis explaining why this change is important and how it differs from the previous year. 
-            3. Prioritize Relevance: Focus on changes that introduce new risks, significantly alter existing risks, or remove previously critical risks. 
+            Using the list of “Risk Analysis Tables” you extracted, please perform a consolidated risk analysis by selecting only the significant and impactful risk factor changes. For each significant risk factor, include:
 
-            DO NOT include the entire tables, only the selected significant risk factor changes.
-            Generate a markdown table without enclosing it in a code block. 
-            Ensure the markdown table is fully completed and there are no missing fields.
-            Structure of the markdown table should be ONLY these 5 columns with the EXACT headings:
-            1. Number - Number of the Risk Factor starting from the number 1.
-            2. Risk Factor - Title of the Risk Factor
-            3. Change - Detailed changed between 2023 and 2024
-            4. Potential Impact - Very detailed potential risk and company impact of the change
-            5. Key Insights - Very detailed key risk analysis insights about the change
+            Potential Impact: A detailed evaluation of how the change affects the company's risk profile, operations, financial performance, or strategic direction.
+            Key Insights: A detailed explanation of why the change is important and how it differs from the previous year.
+            Relevance: Focus on changes that introduce new risks, significantly alter existing risks, or remove previously critical risks.
+            Important Instructions:
+
+            Do not include the entire tables; only include the selected significant risk factor changes.
+            Generate a Markdown table (without using a code block) that is fully complete with no missing fields.
+
+            The table must have exactly 5 columns with the following exact headings:
+            Number: Sequential number starting from 1.
+            Risk Factor: Title of the Risk Factor.
+            Change: Detailed description of the change between 2023 and 2024.
+            Potential Impact: A detailed explanation of the potential risk and company impact of the change.
+            Key Insights: A detailed analysis of the significance of the change.
             </Instructions>
 
             <Risk Analysis Tables>
