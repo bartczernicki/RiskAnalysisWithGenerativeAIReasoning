@@ -1,14 +1,11 @@
-﻿using Azure.AI.OpenAI;
+﻿using Azure;
+using Azure.AI.OpenAI;
 using Microsoft.Extensions.Configuration;
-using OpenAI.Chat;
-using System.ClientModel.Primitives;
 using Microsoft.ML.Tokenizers;
-using ConsoleTables;
-using Markdig;
-using Azure;
-using System.ComponentModel.DataAnnotations;
 using OpenAI;
+using OpenAI.Chat;
 using System.ClientModel;
+using System.ClientModel.Primitives;
 
 namespace RiskAnalysisWithOpenAIReasoning
 {
@@ -34,7 +31,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             // Retrieve the DeepSeek Configuration Section (secrets.json)
             var deepSeekEndpoint = configuration.GetSection("DeepSeek")["DeepSeekAPIEndpoint"];
             var deepSeekDeploymentName = "DeepSeek-R1";
-            reasoningAzureModelDeploymentName = deepSeekDeploymentName;
+            // reasoningAzureModelDeploymentName = deepSeekDeploymentName;
             var deepSeekAPIKey = configuration.GetSection("DeepSeek")["DeepSeekAPIKey"];
 
             // The output directory for the o1 model markdown analysis files
@@ -70,6 +67,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             var localDeepSeekClient = new OpenAIClient(apiCredential, localDeepSeekClientOptions);
             // var localDeepSeekChatClient = localDeepSeekClient.GetChatClient("deepseek-r1-distill-qwen-32b");
             var localDeepSeekChatClient = localDeepSeekClient.GetChatClient("DeepSeek-R1");
+
             // TODO: DELETE THIS CODE WHEN DEEPSEEK IS FIXED
             //var chatMessages = new List<ChatMessage>();
             //chatMessages.Add(new SystemChatMessage("Help with decisions"));
@@ -88,14 +86,14 @@ namespace RiskAnalysisWithOpenAIReasoning
             {
                 // Temperature = 1f,
                 EndUserId = "GPT4o",
-                MaxOutputTokenCount = 16000,           
+                MaxOutputTokenCount = 16000, // max output for GPT-4o           
             };
 
             var completionOptionsReasoning = new ChatCompletionOptions()
             {
                 // Temperature = 1f,
                 EndUserId = "Azure_Reasoning",
-                MaxOutputTokenCount = 32000,
+                MaxOutputTokenCount = 32000, // Increase output for o1 or o3-mini
             };
 
             // Test 
@@ -110,7 +108,7 @@ namespace RiskAnalysisWithOpenAIReasoning
 
             var totalDocumentPromptCount = 0;
             var totalDocumentReasoningTokenCount = 0;
-            var totalDcoumentTotalTokenCount = 0;
+            var totalDocumentTotalTokenCount = 0;
 
             // Lock object to sync multiple threads
             // Note: This is just a simple hack to get Console to show messages in order
@@ -143,7 +141,7 @@ namespace RiskAnalysisWithOpenAIReasoning
                 // Console.WriteLine($"Section: {riskFactorSection.Key} - Prompt Token Count: {sectionPromptTokenCount}");
 
                 // Get new chat reasoningClient for o1 model deployment (used for reasoning)
-                // var chatClientReasoning = reasoningClient.GetChatClient(o1AzureModelDeploymentName);
+                var chatClientReasoning = reasoningClient.GetChatClient(reasoningAzureModelDeploymentName);
 
                 // Get new chat reasoningClient for gpt-4o model deployment (used for markdown formatting)
                 var chatClientGPT4o = gpt4oClient.GetChatClient(gpt4oAzureModelDeploymentName);
@@ -154,7 +152,8 @@ namespace RiskAnalysisWithOpenAIReasoning
                 //var sectionResponse = await chatClientReasoning.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptionsReasoning);
 
                 // DeepSeek Reasoning
-                var chatClientReasoning = localDeepSeekClient.GetChatClient("DeepSeek-R1");
+                // var chatClientReasoning = localDeepSeekClient.GetChatClient("DeepSeek-R1");
+                
                 var sectionResponse = await chatClientReasoning.CompleteChatAsync(chatMessagesRiskAnalysis, completionOptionsReasoning);
                 
                 var sectionOutputTokenDetails = sectionResponse.Value.Usage.OutputTokenDetails;
@@ -171,7 +170,7 @@ namespace RiskAnalysisWithOpenAIReasoning
                 {
                     totalDocumentPromptCount += sectionPromptTokenCount;
                     totalDocumentReasoningTokenCount += sectionOutputTokenDetails.ReasoningTokenCount;
-                    totalDcoumentTotalTokenCount += sectionTotalTokenCount;
+                    totalDocumentTotalTokenCount += sectionTotalTokenCount;
                 }
 
                 // 2) Fix the Markdown table formatting using GPT-4o
@@ -214,7 +213,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             Console.WriteLine($"Overall Job Totals");
             Console.WriteLine($"Total Prompt Token Count: {totalDocumentPromptCount}");
             Console.WriteLine($"Total Reasoning Token Count: {totalDocumentReasoningTokenCount}");
-            Console.WriteLine($"Total Model Output Token Count: {totalDcoumentTotalTokenCount}");
+            Console.WriteLine($"Total Model Output Token Count: {totalDocumentTotalTokenCount}");
             Console.WriteLine(String.Empty);
             Console.WriteLine(String.Empty);
 
@@ -244,8 +243,9 @@ namespace RiskAnalysisWithOpenAIReasoning
             var startTime = DateTime.UtcNow;
 
             // Get new chat reasoningClient for o1 model deployment (used for reasoning)
-            // var chatClientRiskAnalysis = reasoningClient.GetChatClient(o1AzureModelDeploymentName);
-            var chatClientRiskAnalysis = localDeepSeekClient.GetChatClient("DeepSeek-R1");
+            var chatClientRiskAnalysis = reasoningClient.GetChatClient(reasoningAzureModelDeploymentName);
+            //var chatClientRiskAnalysis = localDeepSeekClient.GetChatClient("DeepSeek-R1");
+            
             var response = await chatClientRiskAnalysis.CompleteChatAsync(chatMessageRiskConsolidation, completionOptionsReasoning);
 
             var outputTokenDetails = response.Value.Usage.OutputTokenDetails;
