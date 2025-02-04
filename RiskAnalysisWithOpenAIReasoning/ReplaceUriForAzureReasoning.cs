@@ -61,7 +61,6 @@ namespace RiskAnalysisWithOpenAIReasoning
                     var jsonUpdatedRequestString = JsonSerializer.Serialize(jsonRequestObject);
 
                     request.Content = new StringContent(jsonUpdatedRequestString, Encoding.UTF8, "application/json");
-
                 }
             }
             var response = await base.SendAsync(request, cancellationToken);
