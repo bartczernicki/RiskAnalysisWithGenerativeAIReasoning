@@ -62,8 +62,9 @@ namespace RiskAnalysisWithOpenAIReasoning
             2024 Risk Factor Summary: A brief summary from the 2024 10-K report.
             Change: A description of the differences between 2023 and 2024.
 
-            Using the list of “Risk Analysis Tables” you extracted, please perform a consolidated risk analysis by selecting only the significant and impactful risk factor changes. For each significant risk factor, include:
+            Using the list of “Risk Analysis Tables” you extracted, please perform a consolidated risk analysis by selecting only the significant and impactful risk factor changes. 
 
+            For each significant risk factor, include:
             Potential Impact: A detailed evaluation of how the change affects the company's risk profile, operations, financial performance, or strategic direction.
             Key Insights: A detailed explanation of why the change is important and how it differs from the previous year.
             Relevance: Focus on changes that introduce new risks, significantly alter existing risks, or remove previously critical risks.

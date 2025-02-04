@@ -37,30 +37,31 @@ namespace RiskAnalysisWithOpenAIReasoning
             // The output directory for the o1 model markdown analysis files
             var reasoningOutputDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Output", reasoningAzureModelDeploymentName!);
 
-            var retryPolicy = new ClientRetryPolicy(maxRetries: 5);
-            var azureOpenAIClientOptions = new AzureOpenAIClientOptions(AzureOpenAIClientOptions.ServiceVersion.V2024_10_21);
-            var azureOpenAIClientOptionsReasoning = new AzureOpenAIClientOptions(AzureOpenAIClientOptions.ServiceVersion.V2024_10_21);
+            //var retryPolicy = new ClientRetryPolicy(maxRetries: 5);
+            //var azureOpenAIClientOptions = new AzureOpenAIClientOptions(AzureOpenAIClientOptions.ServiceVersion.V2024_10_21);
+            //var azureOpenAIClientOptionsReasoning = new AzureOpenAIClientOptions(AzureOpenAIClientOptions.ServiceVersion.V2024_10_21);
 
-            azureOpenAIClientOptions.RetryPolicy = retryPolicy;
-            azureOpenAIClientOptions.NetworkTimeout = TimeSpan.FromMinutes(30); // Large Timeout
+            //azureOpenAIClientOptions.RetryPolicy = retryPolicy;
+            //azureOpenAIClientOptions.NetworkTimeout = TimeSpan.FromMinutes(30); // Large Timeout
 
-            azureOpenAIClientOptionsReasoning.RetryPolicy = retryPolicy;
-            azureOpenAIClientOptionsReasoning.NetworkTimeout = TimeSpan.FromMinutes(20); // Large Timeout
-            var reasoningHttpClient = new HttpClient(new ReplaceUriForAzureReasoning());
-            reasoningHttpClient.Timeout = TimeSpan.FromMinutes(20);
-            azureOpenAIClientOptionsReasoning.Transport = new HttpClientPipelineTransport(reasoningHttpClient);
+            //azureOpenAIClientOptionsReasoning.RetryPolicy = retryPolicy;
+            //azureOpenAIClientOptionsReasoning.NetworkTimeout = TimeSpan.FromMinutes(20); // Large Timeout
+            //var reasoningHttpClient = new HttpClient(new ReplaceUriForAzureReasoning());
+            //reasoningHttpClient.Timeout = TimeSpan.FromMinutes(20);
+            //azureOpenAIClientOptionsReasoning.Transport = new HttpClientPipelineTransport(reasoningHttpClient);
 
-            Uri azureOpenAIResourceUri = new(reasoningAzureOpenAIEndpoint!);
-            var azureApiCredentialReasoning = new AzureKeyCredential(reasoningAzureOpenAIAPIKey!);
+            //Uri azureOpenAIResourceUri = new(reasoningAzureOpenAIEndpoint!);
+            //var azureApiCredentialReasoning = new AzureKeyCredential(reasoningAzureOpenAIAPIKey!);
 
             // Azure OpenAI Clients
-            var reasoningClient = new AzureOpenAIClient(azureOpenAIResourceUri, azureApiCredentialReasoning, azureOpenAIClientOptionsReasoning);
-            var gpt4oClient = new AzureOpenAIClient(new Uri(gpt4oAzureOpenAIEndpoint!), new System.ClientModel.ApiKeyCredential(gpt4oAzureOpenAIAPIKey!), azureOpenAIClientOptions);
-            
+            var gpt4oClient = Helpers.GetAzureOpenAIClient(reasoningAzureModelDeploymentName!, gpt4oAzureOpenAIEndpoint!, gpt4oAzureOpenAIAPIKey!);
+            var reasoningClient = Helpers.GetAzureOpenAIClient(gpt4oAzureModelDeploymentName!, reasoningAzureOpenAIEndpoint!, reasoningAzureOpenAIAPIKey!);
+
             // DeepSeek Client
             // var localDeepSeekUri = new Uri("http://192.168.1.212:1234/v1/");
             var localDeepSeekUri = new Uri(deepSeekEndpoint!); // Local DeepSeek
             var localDeepSeekClientOptions = new OpenAIClientOptions { Endpoint = localDeepSeekUri };
+            var retryPolicy = new ClientRetryPolicy(maxRetries: 5);
             localDeepSeekClientOptions.RetryPolicy = retryPolicy;
             localDeepSeekClientOptions.NetworkTimeout = TimeSpan.FromMinutes(20); // Large Timeout
             var apiCredential = new ApiKeyCredential(deepSeekAPIKey!); // No API Key needed for local DeepSeek 
@@ -93,7 +94,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             {
                 // Temperature = 1f,
                 EndUserId = "Azure_Reasoning",
-                MaxOutputTokenCount = 32000, // Increase output for o1 or o3-mini
+                //MaxOutputTokenCount = 32000, // Increase output for o1 or o3-mini
             };
 
             // Test 
@@ -121,6 +122,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             await Parallel.ForEachAsync(Data.GetMicrosoft2023RiskFactors(), options, async (riskFactorSection, cancellationToken) =>
             //foreach (var riskFactorSection in Data.GetMicrosoft2023RiskFactors())
             {
+                Thread.Sleep(200);
                 // 1) Perform Risk Analysis over SEC Documents using o1
                 Console.WriteLine($"Starting to Process Section: {riskFactorSection.Key}");
 
@@ -129,10 +131,10 @@ namespace RiskAnalysisWithOpenAIReasoning
 
                 // Create a Chat Message with Prompt Instructions for the Risk Factor Section
                 var promptInstructions = Prompts.GetFullPromptForSECDocumentAnalysis(riskFactorSection.Key);
-                var promptSystemMessage = new SystemChatMessage("Formatting re-enabled");
+                //var promptSystemMessage = new SystemChatMessage("Formatting re-enabled");
                 var promptInstructionsChatMessageSection = new UserChatMessage(promptInstructions);
                 var chatMessagesRiskAnalysis = new List<ChatMessage>();
-                chatMessagesRiskAnalysis.Add(promptSystemMessage);
+                //chatMessagesRiskAnalysis.Add(promptSystemMessage);
                 chatMessagesRiskAnalysis.Add(promptInstructionsChatMessageSection);
 
                 // Calculate the Prompt Tokens for Section
