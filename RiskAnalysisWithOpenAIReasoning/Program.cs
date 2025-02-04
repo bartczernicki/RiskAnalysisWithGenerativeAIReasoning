@@ -25,20 +25,20 @@ namespace RiskAnalysisWithOpenAIReasoning
 
             // Retrieve the Azure OpenAI Configuration Section (secrets.json)
             var azureOpenAISection = configuration.GetSection("AzureOpenAI");
-            var o1AzureOpenAIEndpoint = configuration.GetSection("AzureOpenAI")["o1Endpoint"];
-            var o1AzureModelDeploymentName = configuration.GetSection("AzureOpenAI")["o1ModelDeploymentName"];
-            var o1AzureOpenAIAPIKey = configuration.GetSection("AzureOpenAI")["o1APIKey"];
+            var reasoningAzureOpenAIEndpoint = configuration.GetSection("AzureOpenAI")["reasoningEndpoint"];
+            var reasoningAzureModelDeploymentName = configuration.GetSection("AzureOpenAI")["reasoningModelDeploymentName"];
+            var reasoningAzureOpenAIAPIKey = configuration.GetSection("AzureOpenAI")["reasoningAPIKey"];
             var gpt4oAzureOpenAIEndpoint = configuration.GetSection("AzureOpenAI")["gpt4oEndpoint"];
             var gpt4oAzureModelDeploymentName = configuration.GetSection("AzureOpenAI")["gpt4oModelDeploymentName"];
             var gpt4oAzureOpenAIAPIKey = configuration.GetSection("AzureOpenAI")["gpt4oAPIKey"];
             // Retrieve the DeepSeek Configuration Section (secrets.json)
             var deepSeekEndpoint = configuration.GetSection("DeepSeek")["DeepSeekAPIEndpoint"];
             var deepSeekDeploymentName = "DeepSeek-R1";
-            o1AzureModelDeploymentName = deepSeekDeploymentName;
+            reasoningAzureModelDeploymentName = deepSeekDeploymentName;
             var deepSeekAPIKey = configuration.GetSection("DeepSeek")["DeepSeekAPIKey"];
 
             // The output directory for the o1 model markdown analysis files
-            var o1OutputDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Output", o1AzureModelDeploymentName!);
+            var reasoningOutputDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Output", reasoningAzureModelDeploymentName!);
 
             var retryPolicy = new ClientRetryPolicy(maxRetries: 5);
             var azureOpenAIClientOptions = new AzureOpenAIClientOptions(AzureOpenAIClientOptions.ServiceVersion.V2024_10_21);
@@ -53,8 +53,8 @@ namespace RiskAnalysisWithOpenAIReasoning
             reasoningHttpClient.Timeout = TimeSpan.FromMinutes(20);
             azureOpenAIClientOptionsReasoning.Transport = new HttpClientPipelineTransport(reasoningHttpClient);
 
-            Uri azureOpenAIResourceUri = new(o1AzureOpenAIEndpoint!);
-            var azureApiCredentialReasoning = new AzureKeyCredential(o1AzureOpenAIAPIKey!);
+            Uri azureOpenAIResourceUri = new(reasoningAzureOpenAIEndpoint!);
+            var azureApiCredentialReasoning = new AzureKeyCredential(reasoningAzureOpenAIAPIKey!);
 
             // Azure OpenAI Clients
             var reasoningClient = new AzureOpenAIClient(azureOpenAIResourceUri, azureApiCredentialReasoning, azureOpenAIClientOptionsReasoning);
@@ -183,11 +183,11 @@ namespace RiskAnalysisWithOpenAIReasoning
 
                 // Write out the fixed markdown file
                 // Console.WriteLine($"Creating MD File...{riskFactorSection.Key}.MD");
-                var markdownRiskFactorSectionPath = Path.Combine(o1OutputDirectory, $"{o1AzureModelDeploymentName!.ToUpper()}-{riskFactorSection.Key}.MD");
+                var markdownRiskFactorSectionPath = Path.Combine(reasoningOutputDirectory, $"{reasoningAzureModelDeploymentName!.ToUpper()}-{riskFactorSection.Key}.MD");
                 // Create directory if it doesn't exit
-                if (!Directory.Exists(o1OutputDirectory))
+                if (!Directory.Exists(reasoningOutputDirectory))
                 {
-                    Directory.CreateDirectory(o1OutputDirectory);
+                    Directory.CreateDirectory(reasoningOutputDirectory);
                 }
                 File.WriteAllText(markdownRiskFactorSectionPath, llmResponseGPT4o);
 
@@ -223,7 +223,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             Console.WriteLine(string.Empty);
 
             // Read each file and extract the table
-            var markdownFiles = Directory.GetFiles(o1OutputDirectory, "*.MD");
+            var markdownFiles = Directory.GetFiles(reasoningOutputDirectory, "*.MD");
             var markdownTables = new List<string>();
             foreach (var file in markdownFiles)
             {
@@ -259,7 +259,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             Console.WriteLine($"Reasoning o1 Tokens: {outputTokenDetails.ReasoningTokenCount}");
             Console.WriteLine($"Total o1 Model Tokens: {totalTokenCount}");
 
-            var markdownConsolidatedRiskAnalysisPath = Path.Combine(o1OutputDirectory, $"{o1AzureModelDeploymentName!.ToUpper()}-CONSOLIDATEDRISKANALYSIS.MD");
+            var markdownConsolidatedRiskAnalysisPath = Path.Combine(reasoningOutputDirectory, $"{reasoningAzureModelDeploymentName!.ToUpper()}-CONSOLIDATEDRISKANALYSIS.MD");
             File.WriteAllText(markdownConsolidatedRiskAnalysisPath, responseRiskConsolidation);
             Console.WriteLine($"Created MD File...CONSOLIDATEDRISKANALYSIS.MD");
             Console.WriteLine(string.Empty);
@@ -268,7 +268,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             Console.WriteLine($"Created MD File...RISKMITIGATIONSTRATEGY.MD");
             Console.WriteLine(string.Empty);
 
-            var consolidatedRiskAnalysisPath = Path.Combine(o1OutputDirectory, $"{o1AzureModelDeploymentName!.ToUpper()}-CONSOLIDATEDRISKANALYSIS.MD");
+            var consolidatedRiskAnalysisPath = Path.Combine(reasoningOutputDirectory, $"{reasoningAzureModelDeploymentName!.ToUpper()}-CONSOLIDATEDRISKANALYSIS.MD");
             var consolidatedRiskAnalysis = File.ReadAllText(consolidatedRiskAnalysisPath);
 
             // Get Prompts
@@ -277,11 +277,11 @@ namespace RiskAnalysisWithOpenAIReasoning
             var chatMessagesApplyRiskMethodology = new List<ChatMessage>();
             chatMessagesApplyRiskMethodology.Add(promptInstructionsApplyRiskMethodologyChatMessage);
             // Execute the o1 Reasoning for creating a Risk Mitigation Strategy
-            var chatClientApplyRiskMethodology = reasoningClient.GetChatClient(o1AzureModelDeploymentName);
+            var chatClientApplyRiskMethodology = reasoningClient.GetChatClient(reasoningAzureModelDeploymentName);
             var responseApplyRiskMethodology = await chatClientApplyRiskMethodology.CompleteChatAsync(chatMessagesApplyRiskMethodology, completionOptionsReasoning);
             var responseApplyRiskMethodologyText = responseApplyRiskMethodology.Value.Content.FirstOrDefault()!.Text;
 
-            var markdownApplyRiskMethodologyPath= Path.Combine(o1OutputDirectory, $"{o1AzureModelDeploymentName!.ToUpper()}-RISKMITIGATIONSTRATEGY.MD");
+            var markdownApplyRiskMethodologyPath= Path.Combine(reasoningOutputDirectory, $"{reasoningAzureModelDeploymentName!.ToUpper()}-RISKMITIGATIONSTRATEGY.MD");
             File.WriteAllText(markdownApplyRiskMethodologyPath, responseApplyRiskMethodologyText);
         }
     }

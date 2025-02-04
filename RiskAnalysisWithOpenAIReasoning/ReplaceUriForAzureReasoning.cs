@@ -1,11 +1,6 @@
-﻿using Azure;
-using Azure.AI.OpenAI;
-using System.ClientModel.Primitives;
-using System.ClientModel;
+﻿using System.Dynamic;
 using System.Text;
 using System.Text.Json;
-using System.Dynamic;
-using OpenAI.Chat;
 using System.Web;
 
 namespace RiskAnalysisWithOpenAIReasoning
@@ -15,10 +10,10 @@ namespace RiskAnalysisWithOpenAIReasoning
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // retrieve JSON Message Payload
-            var jsonRequestString = await request.Content.ReadAsStringAsync();
+            var jsonRequestString = await request.Content!.ReadAsStringAsync();
 
             // Convert jsonRequestString to Object to Manipulate
-            dynamic jsonRequestObject = JsonSerializer.Deserialize<ExpandoObject>(jsonRequestString);
+            dynamic jsonRequestObject = JsonSerializer.Deserialize<ExpandoObject>(jsonRequestString)!;
             var jsonRequestObjectDictionary = (IDictionary<String, Object>) jsonRequestObject!;
 
             // Extract the value of Max_Tokens
