@@ -267,10 +267,9 @@ By leveraging the eight COSO ERM components, Microsoft can create an integrated 
  • Setting clear strategic objectives that incorporate risk mitigation targets.  
  • Identifying and assessing risks continuously through scenario planning and advanced monitoring.  
  • Crafting targeted risk responses combined with robust control activities.  
- • Facilitating open channels of communication and ongoing monitoring to adjust strategies in real time.
-
+ • Facilitating open channels of communication and ongoing monitoring to adjust strategies in real time.  
+ 
 These measures, embedded in the COSO ERM framework, will enable the company to better navigate a complex global landscape, minimize disruptions, and safeguard Microsoft’s market position and reputation over the long term.
---- 
 
 ## Get Started
 
