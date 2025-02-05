@@ -1,12 +1,7 @@
-﻿using Azure;
-using Azure.AI.OpenAI;
-using System;
-using System.ClientModel.Primitives;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Azure.AI.OpenAI;
+using OpenAI;
 using System.ClientModel;
+using System.ClientModel.Primitives;
 
 namespace RiskAnalysisWithOpenAIReasoning
 {
@@ -15,7 +10,8 @@ namespace RiskAnalysisWithOpenAIReasoning
         public static string GetChatCompletionResultWithoutThinkingTokens(string chatCompletionResult)
         {
             // Extract the Thinking Section
-            var chatCompletionResultStart = chatCompletionResult.IndexOf("</think>") + "</think>".Length;
+            var chatCompletionResultStart = (chatCompletionResult.IndexOf("</think>") == -1) ? 
+                0 : ((chatCompletionResult.IndexOf("</think>") + "</think>".Length));
             var chatCompletionResultEnd = chatCompletionResult.Length;
             var chatCompletionWithoutThinkingTokens = chatCompletionResult[chatCompletionResultStart..chatCompletionResultEnd];
 
@@ -44,6 +40,19 @@ namespace RiskAnalysisWithOpenAIReasoning
             );
 
             return azureOpenAIClient;
+        }
+
+        public static OpenAIClient GetOpenAIClient(string modelDeploymentName, string openAIEndpoint, string openAIEndpointAPIKey)
+        {
+            var localDeepSeekUri = new Uri(openAIEndpoint!); // Local DeepSeek
+            var localDeepSeekClientOptions = new OpenAIClientOptions { Endpoint = localDeepSeekUri };
+            var retryPolicy = new ClientRetryPolicy(maxRetries: 5);
+            localDeepSeekClientOptions.RetryPolicy = retryPolicy;
+            localDeepSeekClientOptions.NetworkTimeout = TimeSpan.FromMinutes(20); // Large Timeout
+            var apiCredential = new ApiKeyCredential(openAIEndpointAPIKey!); // No API Key needed for local DeepSeek 
+            var localDeepSeekClient = new OpenAIClient(apiCredential, localDeepSeekClientOptions);
+
+            return localDeepSeekClient;
         }
     }
 }

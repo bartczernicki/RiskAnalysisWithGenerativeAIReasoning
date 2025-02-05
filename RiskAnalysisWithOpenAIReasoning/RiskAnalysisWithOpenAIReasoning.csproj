@@ -18,6 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Output\deepseek-r1-distill-qwen-32b\README.MD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Output\o1-mini\O1-MINI-CONSOLIDATEDRISKANALYSIS.MD">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -78,10 +81,6 @@
     <None Update="Output\o3-mini\README.MD">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Output\DeepSeek-R1\" />
   </ItemGroup>
 
 </Project>
