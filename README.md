@@ -117,7 +117,8 @@ Reasoning models can not only can craft a multi-step risk analysis, but can also
 
 **Applying the COSO ERM Framework to Mitigate Identified Risks**
 
-Below is an integrated set of risk mitigation strategies for the six highlighted Microsoft risk factors. The recommendations follow the key COSO ERM components—Internal Environment (governance and culture), Objective Setting, Event Identification, Risk Assessment, Risk Response, Control Activities, and Information, Communication & Reporting—to ensure that risks are managed holistically and proactively.
+Below is an integrated set of risk mitigation strategies for the six highlighted Microsoft risk factors. The recommendations follow the key COSO ERM components—Internal Environment (governance and culture), Objective Setting, Event Identification, Risk Assessment, Risk Response, Control Activities, and Information, Communication & Reporting—to ensure that risks are managed holistically and proactively.  
+
 
 ───────────────────────────────  
 1. Operations & Infrastructure Risk  
