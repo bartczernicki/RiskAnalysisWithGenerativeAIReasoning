@@ -554,13 +554,18 @@ git clone https://github.com/bartczernicki/RiskAnalysisWithOpenAIReasoning.git
   "AzureOpenAI": {
     "AzureOpenAIType": "PAYGO",
 
-    "o1Endpoint": "https://YOURAZUREOPENAIENDPOINT.openai.azure.com/"
-    "o1ModelDeploymentName": "o1-preview",
-    "o1APIKey": "YOURAZUREOPENAIKEY",
+    "reasoningEndpoint": "https://YOURAZUREOPENAIENDPOINT.openai.azure.com/"
+    "reasoningModelDeploymentName": "o1-preview",
+    "reasoningAPIKey": "YOURAZUREOPENAIKEY",
 
     "gpt4oEndpoint": "https://YOURAZUREOPENAIENDPOINT.openai.azure.com/"
     "gpt4oModelDeploymentName": "gpt-4o-2024-08-06-global",
     "gpt4oAPIKey": "YOURAZUREOPENAIKEY"
+  },
+  "DeepSeek": {
+    "DeepSeekModelName": "deepseek-r1-distill-qwen-32b",
+    "DeepSeekAPIKey": "NOLOCALAPIKEY",
+    "DeepSeekAPIEndpoint": "http://192.168.1.212:1234/v1/"
   }
 }
 ```
