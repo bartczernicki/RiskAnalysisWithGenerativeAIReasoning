@@ -21,17 +21,17 @@ namespace RiskAnalysisWithOpenAIReasoning
         public static AzureOpenAIClient GetAzureOpenAIClient(string modelDeploymentName, string azureOpenAIEndpoint, string azureOpenAIEndpointAPIKey)
         {
             var retryPolicy = new ClientRetryPolicy(maxRetries: 5);
-            var azureOpenAIClientOptions = new AzureOpenAIClientOptions(AzureOpenAIClientOptions.ServiceVersion.V2024_10_21);
+            var azureOpenAIClientOptions = new AzureOpenAIClientOptions(AzureOpenAIClientOptions.ServiceVersion.V2025_01_01_Preview);
             azureOpenAIClientOptions.RetryPolicy = retryPolicy;
             azureOpenAIClientOptions.NetworkTimeout = TimeSpan.FromMinutes(20); // Large Timeout
 
-            var isUnsuportedReasoningModel = modelDeploymentName.Equals("o1") || modelDeploymentName.Contains("o3-mini");
-            if (isUnsuportedReasoningModel)
-            {
-                var reasoningHttpClient = new HttpClient(new ReplaceUriForAzureReasoning());
-                reasoningHttpClient.Timeout = TimeSpan.FromMinutes(20);
-                azureOpenAIClientOptions.Transport = new HttpClientPipelineTransport(reasoningHttpClient);
-            }
+            // var isUnsuportedReasoningModel = modelDeploymentName.Equals("o1") || modelDeploymentName.Contains("o3-mini");
+            //if (isUnsuportedReasoningModel)
+            //{
+            //    var reasoningHttpClient = new HttpClient(new ReplaceUriForAzureReasoning());
+            //    reasoningHttpClient.Timeout = TimeSpan.FromMinutes(20);
+            //    azureOpenAIClientOptions.Transport = new HttpClientPipelineTransport(reasoningHttpClient);
+            //}
 
             var azureOpenAIClient = new AzureOpenAIClient(
                 new Uri(azureOpenAIEndpoint),

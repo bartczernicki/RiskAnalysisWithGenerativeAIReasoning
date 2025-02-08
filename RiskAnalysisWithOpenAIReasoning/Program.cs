@@ -33,7 +33,7 @@ namespace RiskAnalysisWithOpenAIReasoning
             var deepSeekDeploymentName = configuration.GetSection("DeepSeek")["DeepSeekModelName"];
             var deepSeekAPIKey = configuration.GetSection("DeepSeek")["DeepSeekAPIKey"];
 
-            var useLocalReasoning = false;
+            var useLocalReasoning = false; // Set to true to use local DeepSeek reasoning model (LMStudio)
 
             // Azure OpenAI Clients
             var gpt4oClient = Helpers.GetAzureOpenAIClient(gpt4oAzureModelDeploymentName!, gpt4oAzureOpenAIEndpoint!, gpt4oAzureOpenAIAPIKey!);
@@ -66,12 +66,14 @@ namespace RiskAnalysisWithOpenAIReasoning
             {
                 // Temperature = 1f,
                 EndUserId = "Azure_Reasoning",
+                // MaxOutputTokenCount = 16000, // max output for GPT-4o
                 //MaxOutputTokenCount = 32000, // Increase output for o1 or o3-mini
             };
 
             if (useLocalReasoning || ((reasoningModelDeploymentName == "o1") || reasoningModelDeploymentName == "o3-mini"))
             {
-                completionOptionsReasoning.MaxOutputTokenCount = 32000;
+                //completionOptionsReasoning.MaxOutputTokenCount = 32000;
+                completionOptionsReasoning.ReasoningEffortLevel = "high";
             }
 
             // 1 - RISK ANALYSIS ON RISK FACTOR SECTIONS 
@@ -102,13 +104,13 @@ namespace RiskAnalysisWithOpenAIReasoning
 
                 // Create a Chat Message with Prompt Instructions for the Risk Factor Section
                 var promptInstructions = Prompts.GetFullPromptForSECDocumentAnalysis(riskFactorSection.Key);
-                var promptSystemMessage = new SystemChatMessage("Formatting re-enabled");
+                var promptDeveloperMessage = new DeveloperChatMessage("Formatting re-enabled");
                 var promptInstructionsChatMessageSection = new UserChatMessage(promptInstructions);
                 var chatMessagesRiskAnalysis = new List<ChatMessage>();
 
                 if (reasoningAzureModelDeploymentName == "o1" || reasoningModelDeploymentName == "o3-mini")
                 {
-                    chatMessagesRiskAnalysis.Add(promptSystemMessage);
+                    chatMessagesRiskAnalysis.Add(promptDeveloperMessage);
                 }
                 chatMessagesRiskAnalysis.Add(promptInstructionsChatMessageSection);
 
