@@ -67,7 +67,7 @@ namespace RiskAnalysisWithOpenAIReasoning
                 // Temperature = 1f,
                 EndUserId = "Azure_Reasoning",
                 // MaxOutputTokenCount = 16000, // max output for GPT-4o
-                //MaxOutputTokenCount = 32000, // Increase output for o1 or o3-mini
+                MaxOutputTokenCount = 32000, // Increase output for o1 or o3-mini
             };
 
             if (useLocalReasoning || ((reasoningModelDeploymentName == "o1") || reasoningModelDeploymentName == "o3-mini"))
