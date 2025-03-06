@@ -90,7 +90,7 @@ namespace RiskAnalysisWithOpenAIReasoning
 
             // This can be Parallelized
             // Note: this is using one of the risk factors as they are both the same to loop over
-            ParallelOptions options = new ParallelOptions { MaxDegreeOfParallelism = 6 };
+            ParallelOptions options = new ParallelOptions { MaxDegreeOfParallelism = 4 };
             var cancellationToken = new CancellationTokenSource();
             await Parallel.ForEachAsync(Data.GetMicrosoft2023RiskFactors(), options, async (riskFactorSection, cancellationToken) =>
             //foreach (var riskFactorSection in Data.GetMicrosoft2023RiskFactors())
